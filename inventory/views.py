@@ -1,35 +1,90 @@
-#handle displaying the form and saving the submitted data
-from django.shortcuts import render, redirect
-from .forms import CarForm
+from django.shortcuts import render, redirect,  get_object_or_404
+from inventory.forms import CarForm, UserRegistrationForm
+from inventory.models import Car
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
+# Create your views here.
+@login_required
+def profile(request):
+    user = request.user
+    return render(request, 'inventory/profile.html', {'user': user})
+
+def car_list(request):
+    query = request.GET.get('q')
+    cars = Car.objects.all()
+    if query:
+        cars = Car.objects.filter(
+            models.Q(name__icontains=query) |
+            models.Q(name__icontains=query) |
+            models.Q(year__icontains=query)
+        )
+    paginator = Paginator(cars, 5) # Display 5 cars per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'inventory/index.html', {'page_obj': page_obj, 'query': query})
+    #else:
+        #cars = Car.objects.all()
+    #return render(request, 'inventory/index.html', {'cars': cars, 'query': query})
+
+def car_detail(request, id):
+    car = get_object_or_404(Car, id=id)
+    return render(request, 'inventory/car_detail.html', {'car': car})
 
 def add_car(request):
     if request.method == 'POST':
-        form = CarForm(request.POST)
+        form = CarForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('index') # Redirect to homepage
-        else:
-            form = CarForm()
-        return render(request, 'inventory/add_car.html', {'form': form})
-
-#view will display a list of cars on the homepage
-from django.shortcuts import render
-from .models import Car
-
-def index(request):
-    cars = Car.objects.all() # retrieve all cars from the database
-    return render(request, 'inventory/car_detail.html', {'cars': cars})
-def car_detail(request, id):
-    car = Car.objects.get(id=id) #retrieve the car by its ID
-    return render(request, 'inventory/car_detail.html', {'car': car})
-
-# Update the Homepage View to Handle Search Queries
-from django.db.models import Q # import Q for complex lookups
-
-def index(request):
-    query = request.GET.get('q') # Get the search query from the request
-    if query:
-        cars = Car.objects.filter(Q(name__icontains=query) | Q(brand__icontains=query))
+            return redirect('car_list')
     else:
-        cars = Car.objects.all() # show all cars if no search query
-    return render(request, 'inventory/index.html', {'cars': cars, 'query': query})
+        form = CarForm()
+    return render(request, 'inventory/add_car.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('car_list')
+        else:
+            form = AuthenticationForm()
+        return render(request, 'inventory/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('car_list')
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'inventory/register.html', {'form': form})
+
+def edit_car(request, id):
+    car = get_object_or_404(Car, id=id)
+    if request.method == 'POST':
+        form = CarForm(request.POST, request.FILES, instance=car)
+        if form.is_valid():
+            form.save()
+            return redirect('car_list')
+        else:
+            form = CarForm(instance=car)
+        return render(request, 'inventory/edit_car.html', {'form': form, 'car': car})
+
+@login_required
+def delete_car(request, id):
+    car = get_object_or_404(Car, id=id)
+    if request.method == 'POST':
+        car.delete()
+        return redirect('car_list')
+    return render(request, 'inventory/delete_car.html', {'car': car})

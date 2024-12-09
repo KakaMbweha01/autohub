@@ -1,5 +1,7 @@
-class CarAdmin(admin.ModelAdmin):
-    list_display = ('name', 'brand', 'price', 'year') # Display columns
-    search_fields = ('name', 'brand') # Searchable fields
+from django.contrib import admin
 
-admin.site.register(Car, CarAdmin)
+# Register your models here.
+from django.contrib import admin
+from .models import Car
+
+admin.site.register(Car)

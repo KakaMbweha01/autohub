@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ car.name }} - Details</title>
-    <link rel="stylesheet" href="{% static 'inventory/css/style.css' %}">
-</head>
-<body>
-    <h1>{{ car.name }}</h1>
-    <p>Brand: {{ car.brand }}</p>
-    <p>Year: {{ car.year }}</p>
-    <p>Price: ${{ car.price }}</p>
-    <p>{{ car.description }}</p>
-    <img src="{{ car.image_url }}" alt="{{ car.name }}">
-    <a href="/">Back to Home</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ car.name }} - {{ car.brand }}</h2>
+<p><strong>Year:</strong> {{ car.year }}</p>
+<p><strong>Price:</strong> ${{ car.price }}</p>
+<p><strong>Description:</strong> {{ car.descrption }}</p>
+{% if car.image %}
+    <img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
+{% endif %}
+<a href="/">Back to Inventory</a>
+{% endblock %}

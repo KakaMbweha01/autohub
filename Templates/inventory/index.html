@@ -1,47 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autohub - Home</title>
-    <link rel="stylesheet" href="{%static 'inventory/css/style.css' %}">
-</head>
-<body>
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
 
-    {% block content %}
-    <h1>Welcome to Autohub</h1>
-    <!-- Search Form-->
-    <form method="get" action="">
-        <input type="text" name ="q" placeholder="Search by name or brand" value="{{ query|default:''  }}">
-        <button type="submit">Search</button>
-    </form>
-    <!-- Display Results -->
-    <div class="car-list">
-        {% if cars %}
-            {% for car in carsb %}
-                <div class="car">
-                    <h2>{{ car.name }}</h2>
-                    <p>{{ car.brand }}</p>
-                    <p>${{ car.price }}</p>
-                    <a href="{% url 'car_detail' car.id %}">View Details</a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No cars found marching your search criteria</p>
-        {% endif %}
-    </div>
-    {% endblock %}
-    <div class="car-list">
-        {% for car in cars %}
-            <div class="car">
-                <h2>{{ car.name }}</h2>
-                <p>{{ car.brand }}</p>
-                <p>${{ car.price }}</p>
-                <a href="{%  url 'car_detail' car.id %}">View Details</a>
+{% block content %}
+<h2>Car Inventory</h2>
+<form method="get" class="mb-4">
+    <input type="text" name="q" placeholder="Search by name, brand or year" class="form-control" value="{{ query|default:'' }}">
+    <button type="submit" class="btn btn-primary mt-2">Search</button>
+</form>
+<ul class="list-group">
+    {% for car in page_obj %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <h5>{{ car.name }} - {{ car.brand }}</h5>
+                <p>{{ car.year }} - ${{ car.price }}</p>
             </div>
-        {% endfor %}
-    </div>
-</body>
-</html>
+            <div>
+            {% if car.image %}
+                <img src="{{ car.image.url }}" alt="{{ car.name }}" style="width:100px">
+            {% endif %}
+            <a href="/edit/{{ car.id }}/" class="btn btn-warning btn-sm">Edit</a>
+            <a href="/delete/{{ car.id }}/" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </li>
+        {% empty %}
+            <p>No cars match your search criteria.</p>
+    {% endfor %}
+</ul>
 
+<nav>
+    <ul class="pagination justify-content-center mt-4">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+            {% endif %}
+            <li class="page-item disabled">
+                <a class="page-link"> Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </li>
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{%end if %}">Last &raquo;</a>
+                </li>
+            {% endif %}
+    </ul>
+</nav>
+{% endblock %}

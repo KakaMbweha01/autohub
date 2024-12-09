@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a Car</title>
-    <link rel="stylesheet" href="{% static 'inventory/css/style.css' %}">
-</head>
-<body>
-    <h1>Add a New Car</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Car</button>
-    </form>
-    <a href="/">Back to Home</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add a New Car</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Car</button>
+</form>
+<a href="/">Back to Inventory</a>
+{% endblock %}
