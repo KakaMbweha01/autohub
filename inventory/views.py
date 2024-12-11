@@ -23,9 +23,11 @@ def car_list(request):
         cars = Car.objects.filter(Q(name__icontains=query) | Q(brand__icontains=query) | Q(year__icontains=query))
     else:
         cars = Car.objects.all()
+
     paginator = Paginator(cars, 5) # Display 5 cars per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
     return render(request, 'inventory/index.html', {'page_obj': page_obj, 'query': query})
     #return render(request, 'inventory/index.html', {'cars': cars, 'query': query})
 
