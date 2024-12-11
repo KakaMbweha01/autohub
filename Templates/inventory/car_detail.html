@@ -8,5 +8,5 @@
 {% if car.image %}
     <img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
 {% endif %}
-<a href="/">Back to Inventory</a>
+<a href="{% url 'car_list' %}">Back to Inventory</a>
 {% endblock %}

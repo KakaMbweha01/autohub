@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 # Create your views here.
 @login_required
@@ -14,21 +15,18 @@ def profile(request):
     user = request.user
     return render(request, 'inventory/profile.html', {'user': user})
 
+@login_required
 def car_list(request):
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
     cars = Car.objects.all()
     if query:
-        cars = Car.objects.filter(
-            models.Q(name__icontains=query) |
-            models.Q(name__icontains=query) |
-            models.Q(year__icontains=query)
-        )
+        cars = Car.objects.filter(Q(name__icontains=query) | Q(brand__icontains=query) | Q(year__icontains=query))
+    else:
+        cars = Car.objects.all()
     paginator = Paginator(cars, 5) # Display 5 cars per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'inventory/index.html', {'page_obj': page_obj, 'query': query})
-    #else:
-        #cars = Car.objects.all()
     #return render(request, 'inventory/index.html', {'cars': cars, 'query': query})
 
 def car_detail(request, id):
@@ -64,8 +62,11 @@ def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            login(request, user) # login the user after registration
+            return redirect('home')
     else:
         form = UserRegistrationForm()
     return render(request, 'inventory/register.html', {'form': form})

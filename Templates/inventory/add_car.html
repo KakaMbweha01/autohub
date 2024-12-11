@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
+{% block title %}Add Car{% endblock %}
+
 {% block content %}
-<h2>Add a New Car</h2>
-<form method="post" enctype="multipart/form-data">
+<h2 class="mb-4">Add a New Car</h2>
+<form method="post" class="needs-validaton" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Add Car</button>
+    <button type="submit" class="btn btn-success">Submit</button>
+    <a href="{% url 'car_list' %}" class="btn btn-secondary">Back</a>
 </form>
-<a href="/">Back to Inventory</a>
 {% endblock %}
