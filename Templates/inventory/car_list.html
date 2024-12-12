@@ -9,27 +9,6 @@
 {% block title %}Car List{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Available Cars</h1>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Brand</th>
-            <th>Year</th>
-            <th>Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for car in cars %}
-        <tr>
-            <td>{{ car.name }}</td>
-            <td>{{ car.brand }}</td>
-            <td>{{ car.year }}</td>
-            <td>${{ car.price }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
 <a href="{% url 'add_car' %}" class="btn btn-primary">Add New Car</a>
 {% endblock %}
     <form method="get" action="{% url 'car_list' %}" class="d-flex mb-3">
