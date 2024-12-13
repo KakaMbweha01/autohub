@@ -1,3 +1,4 @@
+# Active: 1733979292823@@127.0.0.1@3306@autohub
 from django.shortcuts import render, redirect,  get_object_or_404
 from inventory.forms import CarForm, UserRegistrationForm
 from inventory.models import Car
@@ -91,3 +92,9 @@ def delete_car(request, id):
         car.delete()
         return redirect('car_list')
     return render(request, 'inventory/delete_car.html', {'car': car})
+
+@login_required
+def user_dashboard(request):
+    # get cars added by currently logged-in user
+    user_cars = Car.objects.filter(added_by=request.user)
+    return render(request, 'inventory/user_dashboard.html', {'user_cars': user_cars})
