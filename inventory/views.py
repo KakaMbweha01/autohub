@@ -19,7 +19,7 @@ def profile(request):
 @login_required
 def car_list(request):
     query = request.GET.get('q', '')
-    cars = Car.objects.all()
+    cars = Car.objects.all().order_by('id') # explicitly order by ID
     if query:
         cars = Car.objects.filter(Q(name__icontains=query) | Q(brand__icontains=query) | Q(year__icontains=query))
     else:

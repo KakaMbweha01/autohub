@@ -9,6 +9,9 @@ class Car(models.Model):
     description = models.TextField()
     #image_url = models.URLField()
     image = models.ImageField(upload_to='car_images/', blank=True, null=True)
+    # define default ordering 
+    class Meta:
+        ordering = ['id']
 
     def __str__(self):
         return f"{self.name} ({self.brand})"
