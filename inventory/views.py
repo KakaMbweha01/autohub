@@ -1,6 +1,6 @@
 # Active: 1733979292823@@127.0.0.1@3306@autohub
 from django.shortcuts import render, redirect,  get_object_or_404
-from inventory.forms import CarForm, UserRegistrationForm
+from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm
 from inventory.models import Car
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
@@ -107,12 +107,16 @@ def view_profile(request):
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        form = UserChangeForm(request.POST, instance=request.User)
-        if form.is_valid():
-            form.save()
+        user_form = UserChangeForm(request.POST, instance=request.User)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=request.User.userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
             messages.sucsess(request, 'Your Profile has been updated successfully')
             return redirect('view_profile')
     else:
-        form = UserChangeForm(instance=request.User)
+        user_form = UserChangeForm(instance=request.User)
+        profile_form = UserProfileForm(instance=request.User.userprofile)
 
-    return render(request, 'inventory/edit_profile.html', {'form': form})
+
+    return render(request, 'inventory/edit_profile.html', {'user_form': user_form, 'profile_form':profile_form})
