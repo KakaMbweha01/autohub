@@ -3,17 +3,18 @@ from django.shortcuts import render, redirect,  get_object_or_404
 from inventory.forms import CarForm, UserRegistrationForm
 from inventory.models import Car
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.contrib import messages
 
 # Create your views here.
 @login_required
 def profile(request):
-    user = request.user
+    user = request.User
     return render(request, 'inventory/profile.html', {'user': user})
 
 @login_required
@@ -96,5 +97,22 @@ def delete_car(request, id):
 @login_required
 def user_dashboard(request):
     # get cars added by currently logged-in user
-    user_cars = Car.objects.filter(added_by=request.user)
+    user_cars = Car.objects.filter(added_by=request.User)
     return render(request, 'inventory/user_dashboard.html', {'user_cars': user_cars})
+
+@login_required
+def view_profile(request):
+    return render(request, 'inventory/view_profile.html', {'user': request.User})
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserChangeForm(request.POST, instance=request.User)
+        if form.is_valid():
+            form.save()
+            messages.sucsess(request, 'Your Profile has been updated successfully')
+            return redirect('view_profile')
+    else:
+        form = UserChangeForm(instance=request.User)
+
+    return render(request, 'inventory/edit_profile.html', {'form': form})
