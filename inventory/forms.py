@@ -3,6 +3,7 @@ from .models import Car, UserProfile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db import models
+from datetime import date
 
 class CarForm(forms.ModelForm):
     class Meta:
@@ -34,6 +35,19 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['phone_number', 'address', 'profile_picture', 'date_of_birth', 'gender']
+
+        def clean_phone_number(self):
+            phone_number = self.cleaned_data.get('phone_number')
+            if phone_number and UserProfile.objects.filter(phone_number=phone_number).exclude(user=self.instance.user).exists():
+                raise forms.ValidationError("This phone number is already in use.")
+            return phone_number
+
+        def clean_date_of_birth(self):
+            dob = self.cleaned_data.get('date_of_birth')
+            if dob and dob >= date.today():
+                raise forms.ValidationError("The date of birth cannot be in the future.")
+            return dob
+
         widgets = {
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your phone number'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter your address'}),
