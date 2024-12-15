@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.conf import settings
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Car(models.Model):
@@ -19,7 +21,7 @@ class Car(models.Model):
 
 # model to include a profile picture field
 class UserProfile(models.Model):
-    PHONE_NUMBER_REGEX = RegexValidator(regex=r'^\+?\d{10,15}$', mesasge="Enter a valid phone number (e.g., +254712345678790).")
+    PHONE_NUMBER_REGEX = RegexValidator(regex=r'^\+?\d{10,15}$', message="Enter a valid phone number (e.g., +254712345678790).")
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(
         max_length=15,
@@ -32,7 +34,19 @@ class UserProfile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     GENDER_CHOICES = [
         ('M', 'Male'),
-        ('F', 'Female')
-        ('O', 'Other')
+        ('F', 'Female'),
+        ('O', 'Other'),
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username # Access the username of the associated user
+class Review(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(default=1) # ratings between 1 and 5
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}- {self.rating} Stars"

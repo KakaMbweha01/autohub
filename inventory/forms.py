@@ -26,11 +26,6 @@ def clean(self):
         raise forms.ValidationError("Passwords do not match.")
     return cleaned_data
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone_number = models.Charfield(max_length=15, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
