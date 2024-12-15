@@ -124,3 +124,9 @@ def edit_profile(request):
 
 
     return render(request, 'inventory/edit_profile.html', {'user_form': user_form, 'profile_form':profile_form})
+
+def compare_cars(request):
+    car_ids = request.GET.getlist('cars') # Get selected car IDs
+    cars = Car.objects.filter(id__in=car_ids)
+
+    return render(request, 'inventory/compare.html', {'cars': cars})

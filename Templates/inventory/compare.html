@@ -1,0 +1,27 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Car Compare{% endblock %}
+
+{% block content %}
+<h1>Compare Cars</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Year</th>
+            <th>Price</th>
+            <th>Average Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for car in cars %}
+        <tr>
+            <td>{{ car.brand }}</td>
+            <td>{{ car.year }}</td>
+            <td>${{ car.price }}</td>
+            <td>{{ car.average_rating }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

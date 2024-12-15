@@ -17,5 +17,5 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile, name='edit_profile'), # edit profile
     path('profile/change-password/', auth_views.PasswordChangeView.as_view(template_name='inventory/change_password.html'), name='change_password'), # change password
     path('profile/change-password/done/', auth_views.PasswordChangeDoneView.as_view(template_name='inventory/change_password_done.html'), name='password_change_done'), # change password done
-    
+    path('compare/', views.compare_cars, name='compare_cars'), 
 ]

@@ -16,6 +16,12 @@ class Car(models.Model):
     class Meta:
         ordering = ['id']
 
+    def average_rating(self):
+        reviews = self.reviews.all() # Related reviews using the 'related_name'
+        if reviews.exists():
+            return round(sum(review.rating for review in reviews) / reviews.count(), 1)
+        return 0 # No reviews yet
+
     def __str__(self):
         return f"{self.name} ({self.brand})"
 
