@@ -4,6 +4,27 @@
 
 {% block content %}
 <h1>Edit Profile</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3>Update Profile Information</h3>
+    {% if profile_form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ profile_form.non_field_errors }}
+            <div class="mb-3">
+                <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                {{ profile_form.date_of_birth }}
+            </div>
+            <div class="mb-3">
+                <label for="id_gender" class="form-label">Gender</label>
+                {{ profile_form.gender }}
+            </div>
+        </div>
+    {% endif %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+    <button type="submit" class="btn btn-success">Save Changes</button>
+    <a href="{% url 'view_profle' %}" class="btn btn-secondary">Cancel</a>
+</form>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
