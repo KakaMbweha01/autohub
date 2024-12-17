@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(error => console.error('Error:', error));
-        })
-    })
+        });
+    });
 
     // Function to get CSRF Token
     function getCookie(name) {
