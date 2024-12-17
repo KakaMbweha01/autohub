@@ -1,0 +1,20 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Car Details{% endblock %}
+
+{% block content %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>{{ car.name }} - {{ car.brand }}</h2>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">{{ car.brand }} - {{ car.year }}</h4>
+        <p class="card-text"><strong>Price:</strong> ${{ car.price }}</p>
+        <p class="card-text"><strong>Description:</strong> {{ car.descrption }}</p>
+        <a href="{% url 'car_list' %}" class="btn btn-primary">Back to Inventory</a>
+    </div>
+</div>
+{% if car.image %}
+    <img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
+{% endif %}
+{% endblock %}

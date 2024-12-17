@@ -1,0 +1,24 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<h1>Your Favorite Cars</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Year</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+     <tbody>
+        {% for car in favorites %}
+        <tr>
+            <td>{{ car.name }}</td>
+            <td>{{ car.brand }}</td>
+            <td>{{ car.year }}</td>
+            <td>${{ car.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
