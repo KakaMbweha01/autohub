@@ -139,7 +139,7 @@ LOGOUT_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# loggong to fix error 500 on server side
+# logging to fix error 500 on server side
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

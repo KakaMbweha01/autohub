@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib import messages
 from django.http import JsonResponse
+from django.db.models import Avg
 
 # Create your views here.
 @login_required
@@ -21,7 +22,7 @@ def profile(request):
 @login_required
 def car_list(request):
     query = request.GET.get('q', '')
-    cars = Car.objects.all().order_by('id') # explicitly order by ID
+    cars = Car.objects.all()
     if query:
         cars = Car.objects.filter(
             Q(name__icontains=query) |
@@ -31,11 +32,38 @@ def car_list(request):
     else:
         cars = Car.objects.all().order_by('year')
 
+    cars = Car.objects.annotate(average_rating=Avg('reviews_rating')) # Annotate average rating
+    # Filtering
+    brand = request.Get.get('brand')
+    name = request.Get.get('name')
+    min_price = request.Get.get('min_price')
+    max_price = request.Get.get('max_price')
+    min_year = request.Get.get('min_year')
+    max_year = request.Get.get('max_year')
+
+    if brand:
+        cars = cars.filter(brand__icontains=brand)
+    if name:
+        cars = cars.filter(name__icontains=name)
+    if min_price:
+        cars = cars.filter(price__gte=min_price)
+    if max_price:
+        cars = cars.filter(price__lte=max_price)
+    if min_year:
+        cars = cars.filter(year__gte=min_year)
+    if max_year:
+        cars = cars.filter(year__lte=max_year)
+
+    # Sorting
+    sort_by = request.Get.get('sort_by')
+    if sort_by in ['price', '-price', 'year', '-year', 'average_rating', '-average_rating']:
+        cars = cars.order_by(sort_by)
+
     paginator = Paginator(cars, 5) # Display 5 cars per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'inventory/index.html', {'cars': cars, 'page_obj': page_obj, 'query': query})
+    return render(request, 'inventory/index.html', {'cars': cars, 'page_obj': page_obj, 'query': query, 'query_params': request.GET})
     #return render(request, 'inventory/index.html', {'cars': cars, 'query': query})
 
 def car_detail(request, id):
