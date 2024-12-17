@@ -16,33 +16,47 @@
         <button type="submit" class="btn btn-outline-primary">Search</button>
     </div>
 </form>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Brand</th>
-            <th>Year</th>
-            <th>Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for car in cars %}
-        <tr>
-            <td><a href="{% url 'car_detail car.id %}">{{ car.name }}</a></td>
-            <td>{{ car.brand }}</td>
-            <td>{{ car.year }}</td>
-            <td>${{ car.price }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<form method="get" action="{% url 'compare_cars' %}">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Year</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+         <tbody>
+            {% for car in cars %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="cars" value="{{ car.id }}">
+                </td>
+                <td><a href="{% url 'car_detail car.id %}">{{ car.name }}</a></td>
+                <td>{{ car.brand }}</td>
+                <td>{{ car.year }}</td>
+                <td>${{ car.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Compare</button>
+</form>
+
 <ul class="list-group">
     {% for car in page_obj %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <h5>{{ car.name }} - {{ car.brand }} ({{ car.year }})</h5>
+            <div class="card-body">
+                <h5 class="card-title">{{ car.name }} - {{ car.brand }} ({{ car.year }})</h5>
                 <p>{{ car.year }} - ${{ car.price }}</p>
                 <p>{{ car.description }}</p>
+                <button class="btn btn-warning toggle-favorite" data-car-id="{{ car.id }}">
+                    {% if car in user.userprofile.favorites.all %}
+                        Unfavorite
+                    {% else %}
+                        favorite
+                    {% endif %}
+                </button>
                 <a href="{% url 'car_detail' car.id %}" class="btn btn-info">View Detials</a>
             </div>
             <div>

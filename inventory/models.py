@@ -36,6 +36,7 @@ class UserProfile(models.Model):
         validators=[PHONE_NUMBER_REGEX]
     )
     address = models.TextField(blank=True, null=True)
+    favorites = models.ManyToManyField('Car', blank=True, related_name='favorited_by') # new favorites field
     profile_picture = models.ImageField(upload_to='profile_pics/', default='profile_pics/default.jpg')
     date_of_birth = models.DateField(blank=True, null=True)
     GENDER_CHOICES = [

@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib import messages
+from django.http import JsonResponse
 
 # Create your views here.
 @login_required
@@ -130,3 +131,23 @@ def compare_cars(request):
     cars = Car.objects.filter(id__in=car_ids)
 
     return render(request, 'inventory/compare.html', {'cars': cars})
+
+@login_required
+def toggle_favorite(request, car_id):
+    user_profile = request.user.userprofile
+    car = get_object_or_404(Car, id=car_id)
+
+    if car in user_profile.favorites.all():
+        user_profile.favorites.remove(car) # Remove from favorites
+        favorited = False
+    else:
+        user_profile.favorites.add(car) # Add to favorites
+        favorited = True
+
+    return JsonResponse({'favorited': favorited})
+
+@login_required
+def favorites_list(request):
+    user_profile = request.user.userprofile
+    favorites = user_profile.favorites.all()
+    return render(request, 'inventory/favorites.html', {'favorites': favorites})
