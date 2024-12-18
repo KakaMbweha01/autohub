@@ -3,18 +3,61 @@
 {% block title %}Car Details{% endblock %}
 
 {% block content %}
-<div class="card mt-4">
+<div class="container">
     <div class="card-header">
         <h2>{{ car.name }} - {{ car.brand }}</h2>
     </div>
-    <div class="card-body">
-        <h4 class="card-title">{{ car.brand }} - {{ car.year }}</h4>
-        <p class="card-text"><strong>Price:</strong> ${{ car.price }}</p>
-        <p class="card-text"><strong>Description:</strong> {{ car.descrption }}</p>
-        <a href="{% url 'car_list' %}" class="btn btn-primary">Back to Inventory</a>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
+        </div>
+        <div class="col-md-6">
+            <h3>Details</h3>
+            <ul>
+                <li><strong>Year:</strong> {{ car.year }}</li>
+                <li><strong>Price:</strong> ${{ car.price }}</li>
+                <li><strong>Description:</strong> {{ car.descrption }}</li>
+                <a href="{% url 'car_list' %}" class="btn btn-primary">Back to Inventory</a>
+            </ul>
+        </div>
     </div>
-</div>
+
+    <hr>
+
+    <h3>Reviews</h3>
+    {% for review in car.reviews.all %}
+        <div class="border p-3 mb-3">
+            <p><strong>{{ review.user.username }}</strong> - {{ review.rating }}/5</p>
+            <p>{{ review.text }}</p>
+        </div>
+    {% endfor %}
+
+    <hr>
+
+    {% if user.is_authenticated %}
+    <h3>Leave a Review</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="rating" class="form-label">Rating</label>
+            <select name="rating" id="rating" class="form-select">
+                <option value="1">1 - Poor</option>
+                <option value="2">2 - Fair</option>
+                <option value="3">3 - Good</option>
+                <option value="4">4 - Very Good</option>
+                <option value="5">5 - Excellent</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="text" class="form-label">Review</label>
+            <textarea name="text" id="text" class="form-control" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% else %}
+    <p>Please <a href="{% url 'login' %}">log in</a> to leave a review.</p>
+    {% endif %}
 {% if car.image %}
-    <img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
+<img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
 {% endif %}
 {% endblock %}

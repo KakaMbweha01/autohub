@@ -161,3 +161,11 @@ LOGGING = {
 
 #static file handling
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# configuring email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com' # Replace with email host bado nasaka host
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'my-email@example.com' # Replace with email yangu baadae
+EMAIL_HOST_PASSWORD = 'my-email-password' # Replace na email password 

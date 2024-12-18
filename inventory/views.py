@@ -1,6 +1,6 @@
 # Active: 1733979292823@@127.0.0.1@3306@autohub
 from django.shortcuts import render, redirect,  get_object_or_404
-from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm
+from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm
 from inventory.models import Car
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Avg
+from django.core.mail import send_mail
 
 # Create your views here.
 @login_required
@@ -179,3 +180,28 @@ def favorites_list(request):
     user_profile = request.user.userprofile
     favorites = user_profile.favorites.all()
     return render(request, 'inventory/favorites.html', {'favorites': favorites})
+
+# A view for the contact page
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # extract form data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+
+            # send email
+            send_mail(
+                f"New Inquiry from {name}",
+                message,
+                email,
+                ['admin@example.com'], # Replace with your admin email
+                fail_Silently=False,
+            )
+
+            return render(request, 'inventory/contact_success.html,' {'name': name})
+        else:
+            form=ContactForm()
+
+        return render(request, 'inventory/contact.html', {'form': form})

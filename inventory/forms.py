@@ -17,14 +17,14 @@ class UserRegistrationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
-def clean(self):
-    cleaned_data = super().clean()
-    password = cleaned_data.get('password')
-    confirm_password = cleaned_data.get('confirm_password')
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
 
-    if password != confirm_password:
-        raise forms.ValidationError("Passwords do not match.")
-    return cleaned_data
+        if password != confirm_password:
+            raise forms.ValidationError("Passwords do not match.")
+        return cleaned_data
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -49,3 +49,8 @@ class UserProfileForm(forms.ModelForm):
             'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'gender': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    message = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))

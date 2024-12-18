@@ -20,4 +20,5 @@ urlpatterns = [
     path('compare/', views.compare_cars, name='compare_cars'),
     path('toggle-favorite/<int:car_id>/', views.toggle_favorite, name='toggle_favorite'), # toggling favorites
     path('favorites/', views.favorites_list, name='favorites_list'), # view favorites list
+    path('contact/', views.contact, name='contact'), # view contacts
 ]
