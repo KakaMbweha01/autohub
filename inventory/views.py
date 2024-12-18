@@ -23,7 +23,7 @@ def profile(request):
 @login_required
 def car_list(request):
     query = request.GET.get('q', '')
-    cars = Car.objects.all()
+    cars = Car.objects.all().order_by('name')
     if query:
         cars = Car.objects.filter(
             Q(name__icontains=query) |
@@ -33,14 +33,14 @@ def car_list(request):
     else:
         cars = Car.objects.all().order_by('year')
 
-    cars = Car.objects.annotate(average_rating=Avg('reviews_rating')) # Annotate average rating
+    cars = Car.objects.annotate(average_rating=Avg('reviews')) # Annotate average rating
     # Filtering
-    brand = request.Get.get('brand')
-    name = request.Get.get('name')
-    min_price = request.Get.get('min_price')
-    max_price = request.Get.get('max_price')
-    min_year = request.Get.get('min_year')
-    max_year = request.Get.get('max_year')
+    brand = request.GET.get('brand')
+    name = request.GET.get('name')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    min_year = request.GET.get('min_year')
+    max_year = request.GET.get('max_year')
 
     if brand:
         cars = cars.filter(brand__icontains=brand)
@@ -56,7 +56,7 @@ def car_list(request):
         cars = cars.filter(year__lte=max_year)
 
     # Sorting
-    sort_by = request.Get.get('sort_by')
+    sort_by = request.GET.get('sort_by')
     if sort_by in ['price', '-price', 'year', '-year', 'average_rating', '-average_rating']:
         cars = cars.order_by(sort_by)
 
@@ -131,17 +131,18 @@ def delete_car(request, id):
 @login_required
 def user_dashboard(request):
     # get cars added by currently logged-in user
-    user_cars = Car.objects.filter(added_by=request.User)
-    return render(request, 'inventory/user_dashboard.html', {'user_cars': user_cars})
+    user = request.user # Retrieves loged-in user
+    user_cars = Car.objects.filter(added_by=request.user)
+    return render(request, 'inventory/user_dashboard.html', {'user': user, 'user_cars': user_cars})
 
 @login_required
 def view_profile(request):
-    return render(request, 'inventory/view_profile.html', {'user': request.User})
+    return render(request, 'inventory/view_profile.html', {'user': request.user})
 
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        user_form = UserChangeForm(request.POST, instance=request.User)
+        user_form = UserChangeForm(request.POST, instance=request.user)
         profile_form = UserProfileForm(request.POST, request.FILES, instance=request.User.userprofile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
@@ -149,8 +150,8 @@ def edit_profile(request):
             messages.sucsess(request, 'Your Profile has been updated successfully')
             return redirect('view_profile')
     else:
-        user_form = UserChangeForm(instance=request.User)
-        profile_form = UserProfileForm(instance=request.User.userprofile)
+        user_form = UserChangeForm(instance=request.user)
+        profile_form = UserProfileForm(instance=request.user.userprofile)
 
 
     return render(request, 'inventory/edit_profile.html', {'user_form': user_form, 'profile_form':profile_form})
@@ -200,8 +201,12 @@ def contact(request):
                 fail_Silently=False,
             )
 
-            return render(request, 'inventory/contact_success.html,' {'name': name})
+            return render(request, 'inventory/contact_success.html', {'name': name})
         else:
             form=ContactForm()
 
         return render(request, 'inventory/contact.html', {'form': form})
+
+# the home view
+def home(request):
+    return render(request, 'inventory/home.html') # hapa abdo kazi iko bwana

@@ -10,6 +10,7 @@ class Car(models.Model):
     year = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     #image_url = models.URLField()
     image = models.ImageField(upload_to='car_images/', blank=True, null=True)
     # define default ordering
