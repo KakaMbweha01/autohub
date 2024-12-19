@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-7#6cs-pvj=j&cph&ec%@$c8v-gx*4i$^v3$6xb29ei=&rhg62c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1' ,'localhost']
 
@@ -122,7 +122,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static'
+    BASE_DIR / "static"
 ]
 
 # Default primary key field type
@@ -168,4 +168,4 @@ EMAIL_HOST = 'smtp.gmail.com' # Replace with email host bado nasaka host
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'my-email@example.com' # Replace with email yangu baadae
-EMAIL_HOST_PASSWORD = 'my-email-password' # Replace na email password 
+EMAIL_HOST_PASSWORD = 'my-email-password' # Replace na email password

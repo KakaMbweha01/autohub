@@ -58,6 +58,6 @@
     <p>Please <a href="{% url 'login' %}">log in</a> to leave a review.</p>
     {% endif %}
 {% if car.image %}
-<img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
+    <img src="{{ car.image_url }}" alt="{{ car.name }}" style="max-width:300px">
 {% endif %}
 {% endblock %}

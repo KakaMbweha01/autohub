@@ -1,7 +1,7 @@
 # Active: 1733979292823@@127.0.0.1@3306@autohub
 from django.shortcuts import render, redirect,  get_object_or_404
-from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm
-from inventory.models import Car
+from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm, ReviewForm
+from inventory.models import Car, Review
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
@@ -67,9 +67,24 @@ def car_list(request):
     return render(request, 'inventory/index.html', {'cars': cars, 'page_obj': page_obj, 'query': query, 'query_params': request.GET})
     #return render(request, 'inventory/index.html', {'cars': cars, 'query': query})
 
-def car_detail(request, id):
-    car = get_object_or_404(Car, id=id)
-    return render(request, 'inventory/car_detail.html', {'car': car})
+def car_detail(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+    reviews = car.reviews.all()
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.car = car
+            review.user = request.user
+            review.save()
+            return redirect('car_detail', car_id=car.id)
+    else:
+        form = ReviewForm()
+    return render(request, 'inventory/car_detail.html', {
+        'car': car,
+        'reviews': reviews,
+        'form': form
+    })
 
 def add_car(request):
     if request.method == 'POST':
@@ -109,17 +124,19 @@ def register(request):
         form = UserRegistrationForm()
     return render(request, 'inventory/register.html', {'form': form})
 
-def edit_car(request, id):
-    car = get_object_or_404(Car, id=id)
+def edit_car(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
     if request.method == 'POST':
         form = CarForm(request.POST, request.FILES, instance=car)
         if form.is_valid():
             form.save()
             return redirect('car_list')
         else:
-            form = CarForm(instance=car)
+            # if form is invalid re-render form with errors
+            return render(request, 'inventory/edit_car.html', {'form': form, 'car': car})
+    else:
+        form = CarForm(instance=car)
         return render(request, 'inventory/edit_car.html', {'form': form, 'car': car})
-
 @login_required
 def delete_car(request, id):
     car = get_object_or_404(Car, id=id)
@@ -209,4 +226,9 @@ def contact(request):
 
 # the home view
 def home(request):
-    return render(request, 'inventory/home.html') # hapa abdo kazi iko bwana
+    return render(request, 'inventory/home.html') # hapa bado kazi iko bwana
+
+def search_cars(request):
+    query = request.GET.get('q', '')
+    cars = Car.objects.filter(name__icontains=query) if query else Car.objects.all()
+    return render(request, 'inventory/search_results.html', {'cars': cars, 'query': query})

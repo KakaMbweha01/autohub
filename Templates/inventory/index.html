@@ -3,6 +3,8 @@
 {% block title %}Car List{% endblock %}
 
 {% block content %}
+
+{% load static %}
 <h1 class="mb-4">Available Cars</h1>
 <h2 class="mb-4">Car Inventory</h2>
 <form method="get" class="mb-3">
@@ -32,7 +34,7 @@
                 <option value="-price" {% if query_params.sort_by == '-price' %}selected{% endif %}>Price (High to Low)</option>
                 <option value="year" {% if query_params.sort_by == 'year' %}selected{% endif %}>Year (Old to New)</option>
                 <option value="-year" {% if query_params.sort_by == '-year' %}selected{% endif %}>Year (New to Old)</option>
-                <option value="average_rating" {% if query_params.sort_by== 'average_rating' %}selected{% endif %}>Rating (Low to High)</option>
+                <option value="average_rating" {% if query_params.sort_by == 'average_rating' %}selected{% endif %}>Rating (Low to High)</option>
                 <option value="-average_rating" {% if query_params.sort_by == '-average_rating' %}selected{% endif %}>Rating (High to Low)</option>
             </select>
         </div>
@@ -68,7 +70,7 @@
                 <td>
                     <input type="checkbox" name="cars" value="{{ car.id }}">
                 </td>
-                <td><a href="{% url 'car_detail car.id %}">{{ car.name }}</a></td>
+                <td><a href="{% url 'car_detail' car.id %}">{{ car.name }}</a></td>
                 <td>{{ car.brand }}</td>
                 <td>{{ car.year }}</td>
                 <td>${{ car.price }}</td>
@@ -124,7 +126,7 @@
                     <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{%end if %}">Last &raquo;</a>
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Last &raquo;</a>
                 </li>
             {% endif %}
     </ul>

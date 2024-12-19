@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +20,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                         {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-lnk" href="{% url 'user_dashboard' %}">Dashboard</a>
@@ -29,7 +29,7 @@
                             <a class="nav-link" href="{% url 'login' %}">Logout</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'Add Car' %}">Add Car</a>
+                            <a class="nav-link" href="{% url 'add_car' %}">Add Car</a>
                         </li>
                         {% else %}
                         <li class="nav-item">
@@ -38,7 +38,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'register' %}">Register</a>
                         </li>
-                        {% end if %}
+                        {% endif %}
                     </ul>
                 </div>
             </div>

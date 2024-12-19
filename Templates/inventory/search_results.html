@@ -1,0 +1,19 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+
+<h2>Search Results</h2>
+{% if cars %}
+    <ul>
+        {% for car in cars %}
+            <li>
+                <a href="{% url 'car_detail' car.id %}">{{ car.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No cars found for "{{ query }}".</p>
+{% endif %}
+{% endblock %}

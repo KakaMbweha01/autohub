@@ -13,6 +13,7 @@ class Car(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     #image_url = models.URLField()
     image = models.ImageField(upload_to='car_images/', blank=True, null=True)
+    favorites = models.ManyToManyField(User, related_name='favorited_by', blank=True)
     # define default ordering
     class Meta:
         ordering = ['id']
@@ -51,7 +52,7 @@ class UserProfile(models.Model):
         return self.user.username # Access the username of the associated user
 class Review(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField(default=1) # ratings between 1 and 5
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
