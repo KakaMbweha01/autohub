@@ -1,5 +1,5 @@
 # Active: 1733979292823@@127.0.0.1@3306@autohub
-from django.shortcuts import render, redirect,  get_object_or_404
+from django.shortcuts import render, redirect,  get_object_or_404, get_list_or_404
 from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm, ReviewForm
 from inventory.models import Car, Review
 from django.contrib.auth import login, logout
@@ -175,7 +175,9 @@ def edit_profile(request):
 
 def compare_cars(request):
     car_ids = request.GET.getlist('cars') # Get selected car IDs
-    cars = Car.objects.filter(id__in=car_ids)
+    cars = get_list_or_404(Car, id__in=car_ids) # Fetch selected cars
+    if not car_ids:
+        return render(request, 'inventory/compare.html', {'error': 'No cars selected for comparson.'})
 
     return render(request, 'inventory/compare.html', {'cars': cars})
 

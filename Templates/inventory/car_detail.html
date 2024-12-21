@@ -27,14 +27,17 @@
     <h3>Reviews</h3>
     {% for review in car.reviews.all %}
         <div class="border p-3 mb-3">
-            <p><strong>{{ review.user.username }}</strong> - {{ review.rating }} Stars</p>
-            <p>{{ review.text }}</p>
+            <p><strong>{{ review.user.username }}</strong> rated {{ review.rating }}/5</p>
+            <p>{{ review.comment }}</p>
+            <p><small>Reviewed on {{ review.created_at }}</small></p>
         </div>
+    {% empty %}
+        <p>No reviews yet. Be the first to review!</p>
     {% endfor %}
 
     <hr>
 
-    {% if user.is_authenticated %}
+    {% if request.user.is_authenticated %}
     <h3>Leave a Review</h3>
     <form method="post">
         {% csrf_token %}
@@ -52,7 +55,7 @@
             <label for="text" class="form-label">Review</label>
             <textarea name="text" id="text" class="form-control" rows="4"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit Review</button>
     </form>
     {% else %}
     <p>Please <a href="{% url 'login' %}">log in</a> to leave a review.</p>

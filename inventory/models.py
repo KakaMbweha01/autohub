@@ -53,8 +53,8 @@ class UserProfile(models.Model):
 class Review(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField(default=1) # ratings between 1 and 5
-    comment = models.TextField()
+    rating = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 6)]) # ratings between 1 and 5
+    comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

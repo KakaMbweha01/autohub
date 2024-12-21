@@ -4,25 +4,52 @@
 
 {% block content %}
 <h1>Compare Cars</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Brand</th>
-            <th>Year</th>
-            <th>Price</th>
-            <th>Average Rating</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for car in cars %}
-        <tr>
-            <td>{{ car.brand }}</td>
-            <td>{{ car.year }}</td>
-            <td>${{ car.price }}</td>
-            <td>{{ car.average_rating }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+{% if error %}
+    <p>{{ error }}</p>
+{% else %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                {% for car in cars %}
+                    <th>{{ car.brand }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Brand</td>
+                {% for car in cars %}
+                    <td>{{ car.brand }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Year</td>
+                {% for cars in cars %}
+                    <td>{{ car.year }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Price</td>
+                {% for car in cars %}
+                    <td>Ksh{{ car.price }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Average Rating</td>
+                {% for car in cars %}
+                    <td>{{ car.average_rating }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>Description</td>
+                {% for car in cars %}
+                    <td>{{ car.description }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+{% endif %}
+<a href="{% url 'car_list' %}" class="btn btn-primary">Back to Cars</a>
 {% endblock %}
