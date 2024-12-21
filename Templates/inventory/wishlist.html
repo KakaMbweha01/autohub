@@ -1,0 +1,16 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<h2>Your Wishlist</h2>
+{% for car in wishlist_cars %}
+    <div>
+        <h3>{{ car.name }}</h3>
+        <p>{{ car.brand }} - {{ car.year }}</p>
+        <a href="{% url 'car_detail' car.id %}" class="btn btn-secondary">View Details</a>
+        <a href="{% url 'remove_from_wishlist' car,id %}" class="btn btn-danger">Remove</a>
+    </div>
+{% empty %}
+    <P>Your wishlist is empty.</p>
+{% endfor %}
+<a href="{% url 'car_list' %}" class="btn btn-secondary">Back to Cars</a>
+{% endblock %}

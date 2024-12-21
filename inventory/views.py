@@ -234,3 +234,25 @@ def search_cars(request):
     query = request.GET.get('q', '')
     cars = Car.objects.filter(name__icontains=query) if query else Car.objects.all()
     return render(request, 'inventory/search_results.html', {'cars': cars, 'query': query})
+
+# adding a car to the wish list
+@login_required
+def add_to_wishlist(request, id):
+    car = get_object_or_404(Car, id=id)
+    if request.user not in car.favorited_by.all():
+        car.favorited_by.add(request.user)
+    return redirect('car_detail', id=id)
+
+# removing a car from the wish list
+@login_required
+def remove_from_wishlist(request, id):
+    car = get_object_or_404(Car, id=id)
+    if request.user in car.favorited_by.all():
+        car.favorited_by.remove(request.user)
+    return redirect('wishlist')
+
+# the wishlist view
+def wishlist(request):
+    wishlist_cars = request.user.wishlist.all()
+    return render(request, 'inventory/wishlist.html', {'wishlist_cars': wishlist_cars})
+

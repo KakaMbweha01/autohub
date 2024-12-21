@@ -21,4 +21,7 @@ urlpatterns = [
     path('toggle-favorite/<int:car_id>/', views.toggle_favorite, name='toggle_favorite'), # toggling favorites
     path('favorites/', views.favorites_list, name='favorites_list'), # view favorites list
     path('contact/', views.contact, name='contact'), # view contacts
+    path('wishlist/', views.wishlist, name='wishlist'), # view for wishlist
+    path('wishlist/add/<int:id>/', views.add_to_wishlist, name='add_to_wishlist'), # add to wishlist
+    path('wishlist/remove/<int:id>/', views.remove_from_wishlist, name='remove_from_wishlist'), # remove from wishlist
 ]

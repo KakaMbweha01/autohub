@@ -13,7 +13,8 @@ class Car(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     #image_url = models.URLField()
     image = models.ImageField(upload_to='car_images/', blank=True, null=True)
-    favorites = models.ManyToManyField(User, related_name='favorited_by', blank=True)
+    favorites = models.ManyToManyField(User, related_name='favorite_by', blank=True)
+    favorited_by = models.ManyToManyField(User, related_name='wishlist', blank=True)
     # define default ordering
     class Meta:
         ordering = ['id']
@@ -38,7 +39,7 @@ class UserProfile(models.Model):
         validators=[PHONE_NUMBER_REGEX]
     )
     address = models.TextField(blank=True, null=True)
-    favorites = models.ManyToManyField('Car', blank=True, related_name='favorited_by') # new favorites field
+    favorites = models.ManyToManyField('Car', blank=True, related_name='favorite_by') # new favorites field
     profile_picture = models.ImageField(upload_to='profile_pics/', default='profile_pics/default.jpg')
     date_of_birth = models.DateField(blank=True, null=True)
     GENDER_CHOICES = [
