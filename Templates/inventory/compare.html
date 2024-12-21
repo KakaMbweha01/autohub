@@ -3,7 +3,7 @@
 {% block title %}Car Compare{% endblock %}
 
 {% block content %}
-<h1>Compare Cars</h1>
+<h2>Car Comparison</h2>
 
 {% if error %}
     <p>{{ error }}</p>
@@ -13,7 +13,7 @@
             <tr>
                 <th>Name</th>
                 {% for car in cars %}
-                    <th>{{ car.brand }}</th>
+                    <th>{{ car.name }}</th>
                 {% endfor %}
             </tr>
         </thead>
@@ -51,5 +51,5 @@
         </tbody>
     </table>
 {% endif %}
-<a href="{% url 'car_list' %}" class="btn btn-primary">Back to Cars</a>
+<a href="{% url 'car_list' %}" class="btn btn-secondary">Back to Cars</a>
 {% endblock %}

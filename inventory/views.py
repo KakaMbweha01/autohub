@@ -173,10 +173,11 @@ def edit_profile(request):
 
     return render(request, 'inventory/edit_profile.html', {'user_form': user_form, 'profile_form':profile_form})
 
+# compare cars
 def compare_cars(request):
     car_ids = request.GET.getlist('cars') # Get selected car IDs
     cars = get_list_or_404(Car, id__in=car_ids) # Fetch selected cars
-    if not car_ids:
+    if not cars.exists():
         return render(request, 'inventory/compare.html', {'error': 'No cars selected for comparson.'})
 
     return render(request, 'inventory/compare.html', {'cars': cars})

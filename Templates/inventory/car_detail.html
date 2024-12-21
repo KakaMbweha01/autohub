@@ -24,15 +24,15 @@
 
     <hr>
 
-    <h3>Reviews</h3>
+    <h2>Reviews</h2>
     {% for review in car.reviews.all %}
+    <p>Average Rating: {{ car.reviews.aggregate(Avg('rating')).rating_avg|default:"No ratings yet"}}
         <div class="border p-3 mb-3">
-            <p><strong>{{ review.user.username }}</strong> rated {{ review.rating }}/5</p>
-            <p>{{ review.comment }}</p>
-            <p><small>Reviewed on {{ review.created_at }}</small></p>
+            <p><strong>{{ review.user.username }}</strong> ({{ review.rating }}/5): {{ review.comment }}</p>
+            <p><em>{{ review.created_at }}</em></p>
         </div>
     {% empty %}
-        <p>No reviews yet. Be the first to review!</p>
+        <p>No reviews yet. Be the first to review this car!</p>
     {% endfor %}
 
     <hr>
@@ -57,6 +57,11 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit Review</button>
     </form>
+        {% if request.user in car.favorited_by.all %}
+            <a href="{% url 'remove_from_wishlist' car.id %}" class="btn btn-danger">Remove from Wishlist</a>
+        {% else %}
+            <a href="{% url 'add_to_wishlist' car.id %}" class="btn btn-primary">Add to Wishlist</a>
+        {% endif %}
     {% else %}
     <p>Please <a href="{% url 'login' %}">log in</a> to leave a review.</p>
     {% endif %}

@@ -58,27 +58,32 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Select</th>
                 <th>Name</th>
                 <th>Brand</th>
                 <th>Year</th>
                 <th>Price</th>
+                <th>Details</th>
             </tr>
         </thead>
          <tbody>
             {% for car in cars %}
             <tr>
                 <td>
-                    <input type="checkbox" name="cars" value="{{ car.id }}">
+                    <input type="checkbox" name="car_ids" value="{{ car.id }}">
                 </td>
                 <td><a href="{% url 'car_detail' car.id %}">{{ car.name }}</a></td>
                 <td>{{ car.brand }}</td>
                 <td>{{ car.year }}</td>
-                <td>${{ car.price }}</td>
+                <td>Ksh {{ car.price }}</td>
+                <td>
+                    <a href="{% url 'car_detail' car.id %}">View Details</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <button type="submit" class="btn btn-success">Compare</button>
+    <button type="submit" class="btn btn-primary">Compare Selected Cars</button>
 </form>
 
 <ul class="list-group">
