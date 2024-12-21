@@ -24,4 +24,5 @@ urlpatterns = [
     path('wishlist/', views.wishlist, name='wishlist'), # view for wishlist
     path('wishlist/add/<int:id>/', views.add_to_wishlist, name='add_to_wishlist'), # add to wishlist
     path('wishlist/remove/<int:id>/', views.remove_from_wishlist, name='remove_from_wishlist'), # remove from wishlist
+    path('cars/<int:id>/add_review/', views.add_review, name='add_review'), # reviewers
 ]

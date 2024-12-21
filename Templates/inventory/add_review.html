@@ -1,0 +1,11 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<h2>Add Review for {{ car.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+</form>
+<a href="{% url 'car_detail' car.id %}" class="btn btn-secondary">Cancel</a>
+{% endblock %}

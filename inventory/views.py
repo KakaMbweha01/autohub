@@ -256,3 +256,18 @@ def wishlist(request):
     wishlist_cars = request.user.wishlist.all()
     return render(request, 'inventory/wishlist.html', {'wishlist_cars': wishlist_cars})
 
+# review
+@login_required
+def add_review(request, id):
+    car = get_object_or_404(Car, id=id)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.car = car
+            review.user = request.user
+            review.save()
+            return redirect('car_detail', id=car.id)
+        else:
+            form = ReviewForm()
+        return render(request, 'inventory/add_review.html', {'form': form, 'car': car})
