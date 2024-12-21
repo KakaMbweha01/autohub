@@ -1,7 +1,7 @@
 {% extends 'inventory/base.html' %}
 
 {% block content %}
-<h1>Your Favorite Cars</h1>
+<h2>Your Favorite Cars</h2>
 <table class="table">
     <thead>
         <tr>
@@ -9,6 +9,7 @@
             <th>Brand</th>
             <th>Year</th>
             <th>Price</th>
+            <th>Actions</th>
         </tr>
     </thead>
      <tbody>
@@ -17,8 +18,13 @@
             <td>{{ car.name }}</td>
             <td>{{ car.brand }}</td>
             <td>{{ car.year }}</td>
-            <td>${{ car.price }}</td>
+            <td>Ksh {{ car.price }}</td>
+            <td>
+                <a href="{% url 'remove_from_favorites' car.id %}" class="btn btn-danger">Remove</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<a href="{% url 'car_list' %}" class="btn btn-secondary">Back to Car List</a>
+{% endblock %}

@@ -182,22 +182,22 @@ def compare_cars(request):
 
     return render(request, 'inventory/compare.html', {'cars': cars})
 
+# add a car to favorites
 @login_required
-def toggle_favorite(request, car_id):
-    user_profile = request.user.userprofile
+def add_to_favorites(request, car_id):
     car = get_object_or_404(Car, id=car_id)
+    request.user.favorite_cars.add(car)
+    return redirect('car_list')
 
-    if car in user_profile.favorites.all():
-        user_profile.favorites.remove(car) # Remove from favorites
-        favorited = False
-    else:
-        user_profile.favorites.add(car) # Add to favorites
-        favorited = True
+# remove a car from favorites
+def remove_from_favorites(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+    request.user.favorite_cars.remove(car)
+    return redirect('favorites')
 
-    return JsonResponse({'favorited': favorited})
-
+# favorite cars list
 @login_required
-def favorites_list(request):
+def favorites_cars(request):
     user_profile = request.user.userprofile
     favorites = user_profile.favorites.all()
     return render(request, 'inventory/favorites.html', {'favorites': favorites})
@@ -231,6 +231,7 @@ def contact(request):
 def home(request):
     return render(request, 'inventory/home.html') # hapa bado kazi iko bwana
 
+# car search view
 def search_cars(request):
     query = request.GET.get('q', '')
     cars = Car.objects.filter(name__icontains=query) if query else Car.objects.all()

@@ -79,7 +79,13 @@
                 <td>
                     <a href="{% url 'car_detail' car.id %}">View Details</a>
                 </td>
-            </tr>
+                <td>
+                    {% if car in user.favorite_cars.all %}
+                        <a href="{% url 'remove_from_favorites' car.id %}" class="btn btn-warning">Remove from Favorites</a>
+                    {% else %}
+                        <a href="{% url 'add_to_favorites' car.id %}" class="btn btn-success">Add to Favorites</a>
+                    {% endif %}
+             </tr>
             {% endfor %}
         </tbody>
     </table>
