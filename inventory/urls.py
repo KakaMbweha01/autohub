@@ -18,10 +18,10 @@ urlpatterns = [
     path('profile/change-password/', auth_views.PasswordChangeView.as_view(template_name='inventory/change_password.html'), name='change_password'), # change password
     path('profile/change-password/done/', auth_views.PasswordChangeDoneView.as_view(template_name='inventory/change_password_done.html'), name='password_change_done'), # change password done
     path('compare/', views.compare_cars, name='compare_cars'),
-    path('toggle-favorite/<int:car_id>/', views.toggle_favorite, name='toggle_favorite'), # toggling favorites
-    path('favorites/', views.favorites_list, name='favorites'), # view favorites list
+    #path('toggle-favorite/<int:car_id>/', views.toggle_favorite, name='toggle_favorite'), # toggling favorites
+    path('favorites/', views.favorites_cars, name='favorites'), # view favorites list
     path('favorites/add/<int:car_id>/', views.add_to_favorites, name='add_to_favorites'), # Add a car to favorites
-    path('favorites/remove/<int:car_id/', views.remove_from_favorites, name='remove_from_favorites'), # remove a car from favorites
+    path('favorites/remove/<int:car_id>/', views.remove_from_favorites, name='remove_from_favorites'), # remove a car from favorites
     path('contact/', views.contact, name='contact'), # view contacts
     path('wishlist/', views.wishlist, name='wishlist'), # view for wishlist
     path('wishlist/add/<int:id>/', views.add_to_wishlist, name='add_to_wishlist'), # add to wishlist

@@ -1,7 +1,7 @@
 # Active: 1733979292823@@127.0.0.1@3306@autohub
 from django.shortcuts import render, redirect,  get_object_or_404, get_list_or_404
 from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm, ReviewForm
-from inventory.models import Car, Review
+from inventory.models import Car, Review, UserProfile
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
@@ -198,9 +198,16 @@ def remove_from_favorites(request, car_id):
 # favorite cars list
 @login_required
 def favorites_cars(request):
-    user_profile = request.user.userprofile
-    favorites = user_profile.favorites.all()
-    return render(request, 'inventory/favorites.html', {'favorites': favorites})
+    user = request.user
+    try:
+        user_profile = user.userprofile
+        favorite_cars = user_profile.favorite_cars.all()
+    except UserProfile.DoesNotExist:
+        # Handle the case where the profile does not exist
+        return render(request, 'inventory/error.html', {'message': 'User profile not found'})
+
+    favorite_cars = user_profile.favorite_cars.all()
+    return render(request, 'inventory/favorites.html', {'favorite_cars': favorite_cars})
 
 # A view for the contact page
 def contact(request):
