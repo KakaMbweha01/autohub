@@ -6,13 +6,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Avg
 from django.core.mail import send_mail
+
 
 # Create your views here.
 @login_required
@@ -69,6 +69,12 @@ def car_list(request):
 
 def car_detail(request, car_id):
     car = get_object_or_404(Car, id=car_id)
+    # calculate average rating
+    average_rating = car.reviews.aggregate(Avg('rating'))['rating__avg']
+    context = {
+        'car': car,
+        'average_rating': average_rating or "No ratings yet", # Default message if no ratings exist
+    }
     reviews = car.reviews.all()
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -185,14 +191,33 @@ def compare_cars(request):
 # add a car to favorites
 @login_required
 def add_to_favorites(request, car_id):
+    # get car object
     car = get_object_or_404(Car, id=car_id)
-    request.user.favorite_cars.add(car)
-    return redirect('car_list')
+    # ensure the user has a userprofile
+    #created = UserProfile.objects.get_or_create(user=request.user)
+    user_profile = request.user.userprofile
+    if car not in user_profile.favorite_cars.all():
+        # Add the car to user's favorite
+        user_profile.favorite_cars.add(car)
+        messages.success(request, f"{car.name} has been added to your favorites!")
+    else:
+        messages.info(request, f"{car.name} is already in your favorites.")
+    return redirect('favorites')
 
 # remove a car from favorites
+@login_required
 def remove_from_favorites(request, car_id):
+    # get the car object
     car = get_object_or_404(Car, id=car_id)
-    request.user.favorite_cars.remove(car)
+    #ensure the user has a profile
+    #created = UserProfile.objects.get_or_create(user=request.user)
+    user_profile = request.user.userprofile
+    if car in user_profile.favorite_cars.all():
+        # remove car from user's favorite
+        user_profile.favorite_cars.remove(car)
+        messages.success(request, f"{car.name} has been removed from your favorites!")
+    else:
+        messages.warning(request, f"{car.name} is not in your favorites.")
     return redirect('favorites')
 
 # favorite cars list
@@ -206,7 +231,7 @@ def favorites_cars(request):
         # Handle the case where the profile does not exist
         return render(request, 'inventory/error.html', {'message': 'User profile not found'})
 
-    favorite_cars = user_profile.favorite_cars.all()
+    #favorite_cars = user_profile.favorite_cars.all()
     return render(request, 'inventory/favorites.html', {'favorite_cars': favorite_cars})
 
 # A view for the contact page
@@ -280,3 +305,18 @@ def add_review(request, id):
         else:
             form = ReviewForm()
         return render(request, 'inventory/add_review.html', {'form': form, 'car': car})
+
+# submitting a review & Adding a message
+def submit_review(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.car = car
+            review.user = request.user
+            review.save()
+            messages.success(request, "Your review has been submitted successfully!")
+        else:
+            messages.error(request, "There was an error submitting your review. Please try again.")
+    return redirect('car_detail', car_id=car.id)

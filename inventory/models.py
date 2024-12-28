@@ -15,8 +15,8 @@ class Car(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     #image_url = models.URLField()
     image = models.ImageField(upload_to='car_images/', blank=True, null=True)
-    favorites = models.ManyToManyField(User, related_name='favorite_cars', blank=True)
-    favorited_by = models.ManyToManyField(User, related_name='wishlist', blank=True)
+    #favorite_cars = models.ManyToManyField(User, blank=True, related_name='favorited_by')
+    #favorited_by = models.ManyToManyField(User, related_name='wishlist', blank=True)
     # define default ordering
     class Meta:
         ordering = ['id']
@@ -41,7 +41,7 @@ class UserProfile(models.Model):
         validators=[PHONE_NUMBER_REGEX]
     )
     address = models.TextField(blank=True, null=True)
-    favorites = models.ManyToManyField('Car', blank=True, related_name='favorite_cars') # new favorites field
+    favorite_cars = models.ManyToManyField(Car, related_name='favorited_by') # new favorites field
     profile_picture = models.ImageField(upload_to='profile_pics/', default='profile_pics/default.jpg')
     date_of_birth = models.DateField(blank=True, null=True)
     GENDER_CHOICES = [
@@ -51,17 +51,18 @@ class UserProfile(models.Model):
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
 
-    @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            UserProfile.objects.create(user=instance)
-
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.userprofile.save()
-
     def __str__(self):
         return self.user.username # Access the username of the associated user
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.userprofile.save()
+
 class Review(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -70,4 +71,4 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}- {self.rating} Stars"
+        return f"{self.user.username}- {self.rating}"

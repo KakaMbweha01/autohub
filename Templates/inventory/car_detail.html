@@ -15,7 +15,7 @@
             <h3>Details</h3>
             <ul>
                 <li><strong>Year:</strong> {{ car.year }}</li>
-                <li><strong>Price:</strong> ${{ car.price }}</li>
+                <li><strong>Price:</strong> Ksh {{ car.price }}</li>
                 <li><strong>Description:</strong> {{ car.descrption }}</li>
                 <a href="{% url 'car_list' %}" class="btn btn-primary">Back to Inventory</a>
             </ul>
@@ -26,7 +26,6 @@
 
     <h2>Reviews</h2>
     {% for review in car.reviews.all %}
-    <p>Average Rating: {{ car.reviews.aggregate(Avg('rating')).rating_avg|default:"No ratings yet"}}
         <div class="border p-3 mb-3">
             <p><strong>{{ review.user.username }}</strong> ({{ review.rating }}/5): {{ review.comment }}</p>
             <p><em>{{ review.created_at }}</em></p>

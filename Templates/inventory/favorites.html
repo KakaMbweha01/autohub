@@ -12,17 +12,17 @@
             <th>Actions</th>
         </tr>
     </thead>
-     <tbody>
-        {% for car in favorites %}
-        <tr>
-            <td>{{ car.name }}</td>
-            <td>{{ car.brand }}</td>
-            <td>{{ car.year }}</td>
-            <td>Ksh {{ car.price }}</td>
-            <td>
-                <a href="{% url 'remove_from_favorites' car.id %}" class="btn btn-danger">Remove</a>
-            </td>
-        </tr>
+    <tbody>
+        {% for car in favorite_cars %}
+            <tr>
+                <td>{{ car.name }}</td>
+                <td>{{ car.brand }}</td>
+                <td>{{ car.year }}</td>
+                <td>Ksh {{ car.price }}</td>
+                <td>
+                    <a href="{% url 'remove_from_favorites' car.id %}" class="btn btn-danger">Remove</a>
+                </td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
