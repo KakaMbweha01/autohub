@@ -182,7 +182,9 @@ def edit_profile(request):
 # compare cars
 def compare_cars(request):
     car_ids = request.GET.getlist('cars') # Get selected car IDs
-    cars = get_list_or_404(Car, id__in=car_ids) # Fetch selected cars
+    #cars = get_list_or_404(Car, id__in=car_ids)
+    #Fetch selected cars
+    cars = Car.objects.filter(id__in=car_ids)
     if not cars.exists():
         return render(request, 'inventory/compare.html', {'error': 'No cars selected for comparson.'})
 
@@ -266,7 +268,14 @@ def home(request):
 # car search view
 def search_cars(request):
     query = request.GET.get('q', '')
-    cars = Car.objects.filter(name__icontains=query) if query else Car.objects.all()
+    cars = Car.objects.all()
+    if query:
+        cars = cars.filter(
+            Q(name__icontains=query) |
+            Q(brand__icontains=query) |
+            Q(year__icontains=query) |
+            Q(price__icontains=query)
+        )
     return render(request, 'inventory/search_results.html', {'cars': cars, 'query': query})
 
 # adding a car to the wish list

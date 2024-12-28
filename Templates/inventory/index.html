@@ -85,6 +85,10 @@
                     {% else %}
                         <a href="{% url 'add_to_favorites' car.id %}" class="btn btn-success">Add to Favorites</a>
                     {% endif %}
+                </td>
+                <td>
+                    <input type="checkbox" name="cars" value="{{ car.id }}"> Compare {{ car.name }}
+                </td>
              </tr>
             {% endfor %}
         </tbody>

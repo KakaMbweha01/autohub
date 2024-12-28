@@ -5,15 +5,20 @@
 {% block content %}
 
 <h2>Search Results</h2>
+{% if query %}
+<p>Results for "{{ query }}":</p>
+{% endif %}
+
 {% if cars %}
     <ul>
         {% for car in cars %}
             <li>
-                <a href="{% url 'car_detail' car.id %}">{{ car.name }}</a>
+                <strong>{{ car.name }}</strong> - {{ car.brand }} ({{ car.year }}) - ${{ car.price }}
+                <a href="{% url 'car_detail' car.id %}">View Details</a>
             </li>
         {% endfor %}
     </ul>
 {% else %}
-    <p>No cars found for "{{ query }}".</p>
+<p>No cars found for "{{ query }}".</p>
 {% endif %}
 {% endblock %}
