@@ -38,6 +38,22 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'register' %}">Register</a>
                         </li>
+                        <!-- base.html -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Notifications
+                            {% if unread_notifications.count > 0 %}
+                            <span class="badge badge-danger">{{ unread_notifications.count }}</span>
+                            {% endif %}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="notificationDropdown">
+                                {% for notification in unread_notifications %}
+                                <a class="dropdown-item" href="{% url 'mark_as_read' notification.id %}">
+                                    {{ notification.message }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </li>
                         {% endif %}
                     </ul>
                 </div>

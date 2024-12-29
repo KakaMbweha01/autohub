@@ -51,3 +51,31 @@ form .row > .col {
 .navbar-brand {
     font-weight: bold;
 }
+
+.notifications {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.notifications ul {
+    list-style: none;
+    padding: 0;
+}
+
+.notifications li {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.notifications li.unread {
+    background: #e6f7ff;
+    border-left: 5px solid #2196F3;
+}
+
+.notifications .timestamp {
+    font-size: 0.9em;
+    color: #666;
+}

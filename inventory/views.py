@@ -1,7 +1,7 @@
 # Active: 1733979292823@@127.0.0.1@3306@autohub
 from django.shortcuts import render, redirect,  get_object_or_404, get_list_or_404
 from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm, ReviewForm
-from inventory.models import Car, Review, UserProfile
+from inventory.models import Car, Review, UserProfile, Notification
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
@@ -20,10 +20,12 @@ def profile(request):
     user = request.User
     return render(request, 'inventory/profile.html', {'user': user})
 
+# view for the list of cars
 @login_required
 def car_list(request):
     query = request.GET.get('q', '')
     cars = Car.objects.all().order_by('name')
+    unread_notifications = request.user.notifications.filter(is_read=False).count()
     if query:
         cars = Car.objects.filter(
             Q(name__icontains=query) |
@@ -64,9 +66,15 @@ def car_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'inventory/index.html', {'cars': cars, 'page_obj': page_obj, 'query': query, 'query_params': request.GET})
+    return render(request, 'inventory/index.html', {
+        'cars': cars,
+        'page_obj': page_obj,
+        'query': query,
+        'query_params': request.GET,
+        'unread_notifications': unread_notifications})
     #return render(request, 'inventory/index.html', {'cars': cars, 'query': query})
 
+# view for the details of the car
 def car_detail(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     # calculate average rating
@@ -92,12 +100,34 @@ def car_detail(request, car_id):
         'form': form
     })
 
+# view to add a car
 def add_car(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CarForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            car = form.save(commit=False)
+            # car creation logic
+            car = Car.objects.create(
+                name=request.POST['name'],
+                brand=request.POST['brand'],
+                year=request.POST['year'],
+                price=request.POST['price'],
+                added_by=request.user,
+            )
+            #car.added_by = request.user
+            car.save()
+            #  notfications for all the users about the new car
+            users = User.objects.exclude(id=request.user.id) # exclude user who addded car
+            notification_message = f"A new car '{car.name}' has been added by {request.user.username}."
+            notifications = [
+                Notification(user=user, message=notification_message)
+                for user in users
+            ]
+            Notification.objects.bulk_create(notifications) # batch creation
+            messages.success(request, "Car added successfully!")
             return redirect('car_list')
+        else:
+            messages.error(request, "There was an error adding the car. Please check the form.")
     else:
         form = CarForm()
     return render(request, 'inventory/add_car.html', {'form': form})
@@ -204,6 +234,11 @@ def add_to_favorites(request, car_id):
         messages.success(request, f"{car.name} has been added to your favorites!")
     else:
         messages.info(request, f"{car.name} is already in your favorites.")
+    # notifying the car owner when someone has added their car to favorites
+    Notification.objects.create(
+        user=car.added_by,
+        message=f"{user_profile} has favorited your car '{car.name}'."
+    )
     return redirect('favorites')
 
 # remove a car from favorites
@@ -316,6 +351,7 @@ def add_review(request, id):
         return render(request, 'inventory/add_review.html', {'form': form, 'car': car})
 
 # submitting a review & Adding a message
+@login_required
 def submit_review(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     if request.method == 'POST':
@@ -329,3 +365,24 @@ def submit_review(request, car_id):
         else:
             messages.error(request, "There was an error submitting your review. Please try again.")
     return redirect('car_detail', car_id=car.id)
+
+# list user notifications
+@login_required
+def notifications(request):
+    user_notifications = request.user.notifications.all()
+    return render(request, 'inventory/notifications.html,', {'notifications': user_notifications})
+
+# mark notification as read
+@login_required
+def mark_as_read(request, notification_id):
+    notification = get_object_or_404(notifications, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    return redirect('dashboard')
+
+# mark all notifications as read
+@login_required
+def mark_all_as_read(request):
+    request.user.notifications.filter(is_read=False).update(is_read=True)
+    messages.info(request, "All notifications marked as read.")
+    return redirect('dashboard')

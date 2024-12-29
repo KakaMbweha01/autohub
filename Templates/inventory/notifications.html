@@ -1,0 +1,23 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<div class="notifications">
+    <h3>Notifications</h3>
+    <ul>
+        {% for notification in notifications %}
+            <li class="{% if not notification.is_read %}font-weight-bold{% endif %}">
+            <p>{{ notification.message }}</p>
+            <span>{{ notification.created_at|date:"F j, Y, g:i a"  }}</span>
+            {% if not notification.is_read %}
+                <form method="post" action="{% url 'mark_as_read' notification.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Mark as read</button>
+            {% endif %}
+            </li>
+        {% empty %}
+            <li>No notifications available.</li>
+        {% endfor %}
+        <a href="{% url 'mark_all_as_read' %}" class="btn btn-secondary">Mark All as Read</a>
+    </ul>
+</div>
+{% endblock %}

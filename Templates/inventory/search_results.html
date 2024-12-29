@@ -13,7 +13,7 @@
     <ul>
         {% for car in cars %}
             <li>
-                <strong>{{ car.name }}</strong> - {{ car.brand }} ({{ car.year }}) - ${{ car.price }}
+                <strong>{{ car.name }}</strong> - {{ car.brand }} ({{ car.year }}) - Ksh {{ car.price }}
                 <a href="{% url 'car_detail' car.id %}">View Details</a>
             </li>
         {% endfor %}

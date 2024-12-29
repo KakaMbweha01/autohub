@@ -1,0 +1,44 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<div class="notifications">
+    <h3>Notifications</h3>
+    <ul>
+        {% for notification in notifications %}
+        <li class="{% if not notification.is_read %}font-weight-bold{% endif %}">
+            {{ notification.message }} - {{ notification.created_at|date:"F j, Y, g:i a"  }}
+            {% if not notification.is_read %}
+            <a href="{% url 'mark_as_read' notification.id %}">Mark as read</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+        {% for notification in request.user.notifications.all %}
+            <li>
+                {{ notification.message }}
+                {% if not notification.is_read %}
+                    <strong>(New)</strong>
+                {% endif %}
+                <span class="timestamp">{{ notification.created_at }}</span>
+            </li>
+        {% empty %}
+            <li>No notifications yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="{% url 'notifications' %}" role="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Notifications
+    {% if unread_notifications.count > 0 %}
+    <span class="badge badge-danger">{{ unread_notifications.count }}</span>
+    {% endif %}
+    </a>
+    <div class="dropdown-menu" aria-labelledby="notificationDropdown">
+        {% for notification in unread_notifications %}
+        <a class="dropdown-item" href="{% url 'mark_as_read' notification.id %}">
+            {{ notification.message }}
+        </a>
+        {% endfor %}
+        <a href="{% url 'mark_all_as_read' %}" class="btn btn-secondary">Mark All as Read</a>
+    </div>
+</li>
+{% endblock %}

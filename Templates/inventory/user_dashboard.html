@@ -5,6 +5,23 @@
 {% block content %}
 <h1>Welcome, {{ user.username }}</h1>
 <h2>Your Added Cars</h2>
+<div class="notifications">
+    <h3>Notifications</h3>
+    <ul>
+        {% for notification in request.user.notifications.all %}
+            <li>
+                {{ notification.message }}
+                {% if not notification.is_read %}
+                    <strong>(New)</strong>
+                {% endif %}
+                <span class="timestamp">{{ notification.created_at }}</span>
+            </li>
+        {% empty %}
+            <li>No notifications yet.</li>
+        {% endfor %}
+        
+    </ul>
+</div>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -20,7 +37,7 @@
             <td>{{ car.name }}</td>
             <td>{{ car.brand }}</td>
             <td>{{ car.year }}</td>
-            <td>${{ car.price }}</td>
+            <td>Ksh {{ car.price }}</td>
         </tr>
         {% empty %}
         <tr>

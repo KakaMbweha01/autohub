@@ -5,11 +5,13 @@ from django.contrib.auth.models import User
 from django.db import models
 from datetime import date
 
+# modelform for adding cars
 class CarForm(forms.ModelForm):
     class Meta:
         model = Car
         fields = ['name', 'brand', 'year', 'price', 'description', 'image']
 
+# modelform for user registration
 class UserRegistrationForm(UserCreationForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
@@ -26,6 +28,7 @@ class UserRegistrationForm(UserCreationForm):
             raise forms.ValidationError("Passwords do not match.")
         return cleaned_data
 
+# modelForm for creating a userprofile
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
@@ -50,11 +53,13 @@ class UserProfileForm(forms.ModelForm):
             'gender': forms.Select(attrs={'class': 'form-control'}),
         }
 
+# modelForm to create a way to contact the user
 class ContactForm(forms.Form):
     name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
     message = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
 
+# modelForm to make a review
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review

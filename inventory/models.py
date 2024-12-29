@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 # Create your models here.
+# car model
 class Car(models.Model):
     name = models.CharField(max_length=100)
     brand = models.CharField(max_length=100)
@@ -30,7 +31,7 @@ class Car(models.Model):
     def __str__(self):
         return f"{self.name} ({self.brand})"
 
-# model to include a profile picture field
+# user profile model, has a profile picture field
 class UserProfile(models.Model):
     PHONE_NUMBER_REGEX = RegexValidator(regex=r'^\+?\d{10,15}$', message="Enter a valid phone number (e.g., +254712345678790).")
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -63,6 +64,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
 
+# Review model
 class Review(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -72,3 +74,13 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.user.username}- {self.rating}"
+
+# notification model for user notifications
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False) # has the user read the notifications
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.user.username}: {self.message}"
