@@ -28,7 +28,7 @@ urlpatterns = [
     path('wishlist/remove/<int:id>/', views.remove_from_wishlist, name='remove_from_wishlist'), # remove from wishlist
     path('cars/<int:id>/add_review/', views.add_review, name='add_review'), # reviewers
     path('search/', views.search_cars, name='search_cars'), # search for cars
-    path('notifications/', views.notifications, name='notifications'), # notifications
-    path('notifications/read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'), # mark as read notification
+    path('notifications/', views.notifications, name='notification'), # notifications
+    path('notifications/read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'), # mark notification as read
     path('notifications/read_all', views.mark_all_as_read, name='mark_all_as_read'), # mark all notifications as read
 ]

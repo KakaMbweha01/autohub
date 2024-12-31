@@ -19,7 +19,7 @@
         {% empty %}
             <li>No notifications yet.</li>
         {% endfor %}
-        
+        <a href="{% url 'mark_all_as_read' %}" class="btn btn-secondary">Mark all as read</a>
     </ul>
 </div>
 <table class="table table-striped">

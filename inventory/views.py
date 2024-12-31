@@ -13,7 +13,6 @@ from django.http import JsonResponse
 from django.db.models import Avg
 from django.core.mail import send_mail
 
-
 # Create your views here.
 @login_required
 def profile(request):
@@ -25,7 +24,7 @@ def profile(request):
 def car_list(request):
     query = request.GET.get('q', '')
     cars = Car.objects.all().order_by('name')
-    unread_notifications = request.user.notifications.filter(is_read=False).count()
+    unread_notifications = request.user.notifications.filter(is_read=False).all()
     if query:
         cars = Car.objects.filter(
             Q(name__icontains=query) |
@@ -370,19 +369,21 @@ def submit_review(request, car_id):
 @login_required
 def notifications(request):
     user_notifications = request.user.notifications.all()
-    return render(request, 'inventory/notifications.html,', {'notifications': user_notifications})
+    return render(request, 'inventory/notifications.html', {'notifications': user_notifications})
 
 # mark notification as read
 @login_required
 def mark_as_read(request, notification_id):
-    notification = get_object_or_404(notifications, id=notification_id, user=request.user)
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
     notification.is_read = True
     notification.save()
-    return redirect('dashboard')
+    #request.user.notifications.update(is_read=True)
+    #messages.info(request, "All notifications marked as read")
+    return redirect('user_dashboard')
 
 # mark all notifications as read
 @login_required
 def mark_all_as_read(request):
     request.user.notifications.filter(is_read=False).update(is_read=True)
     messages.info(request, "All notifications marked as read.")
-    return redirect('dashboard')
+    return redirect('home')

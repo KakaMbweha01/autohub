@@ -23,7 +23,7 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                         {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-lnk" href="{% url 'user_dashboard' %}">Dashboard</a>
+                            <a class="nav-link" href="{% url 'user_dashboard' %}">Dashboard</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">Logout</a>
@@ -31,20 +31,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'add_car' %}">Add Car</a>
                         </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Register</a>
-                        </li>
-                        <!-- base.html -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Notifications
-                            {% if unread_notifications.count > 0 %}
-                            <span class="badge badge-danger">{{ unread_notifications.count }}</span>
-                            {% endif %}
+                            <a class="nav-link dropdown-toggle" href="{% url 'notification' %}" id="notificationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Notifications
+                                {% if unread_notifications.count > 0 %}
+                                <span class="badge badge-danger">{{ unread_notificaations.count }}</span>
+                                {% endif %}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="notificationDropdown">
                                 {% for notification in unread_notifications %}
@@ -53,6 +45,13 @@
                                 </a>
                                 {% endfor %}
                             </div>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
                         </li>
                         {% endif %}
                     </ul>
