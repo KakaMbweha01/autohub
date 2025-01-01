@@ -96,8 +96,8 @@ def car_detail(request, car_id):
     return render(request, 'inventory/car_detail.html', {
         'car': car,
         'reviews': reviews,
-        'form': form
-    })
+        'form': form,
+    }, context)
 
 # view to add a car
 def add_car(request):
@@ -301,16 +301,51 @@ def home(request):
 
 # car search view
 def search_cars(request):
-    query = request.GET.get('q', '')
-    cars = Car.objects.all()
+    query = request.GET.get('q', '') # search term
+    #cars = Car.objects.all()
+    min_price = request.GET.get('min_price', None) # minimum price filter
+    max_price = request.GET.get('max_price', None) # maximum price filter
+    year = request.GET.get('year', None) # Year filter
+    sort_by = request.GET.get('sort_by', 'price_asc') # sort by attribute, default to 'price_asc'
+    #brand = request.GET.get('brand') # get the brand name
+    results = Car.objects.all()
     if query:
-        cars = cars.filter(
+        results = results.filter(
             Q(name__icontains=query) |
             Q(brand__icontains=query) |
-            Q(year__icontains=query) |
-            Q(price__icontains=query)
+            Q(description__icontains=query)
         )
-    return render(request, 'inventory/search_results.html', {'cars': cars, 'query': query})
+    if min_price:
+        results = results.filter(price__gte=min_price)
+
+    if max_price:
+        results = results.filter(price__lte=max_price)
+
+    if year:
+        results = results.filter(year=year)
+
+    # sorting
+    if sort_by == 'price_asc':
+        results = results.order_by('price')
+    elif sort_by == 'price_desc':
+        results = results.order_by('-price')
+    elif sort_by == 'year_desc':
+        results = results.order_by('-year')
+
+    # pagination of results
+    paginator = Paginator(results, 4) # 4 results per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {'query': query,
+               'results': results,
+               'min_price': min_price,
+               'max_price': max_price,
+               'year': year,
+               'sort_by': sort_by,
+               'page_obj': page_obj,
+    }
+    return render(request, 'inventory/search_results.html', context)
 
 # adding a car to the wish list
 @login_required

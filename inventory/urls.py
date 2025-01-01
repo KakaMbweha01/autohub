@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.car_list, name='car_list'), # Homepage
-    path('car<int:car_id>/', views.car_detail, name='car_detail'), # cardetails
+    path('car/<int:car_id>/', views.car_detail, name='car_detail'), # cardetails
     path('add/', views.add_car, name='add_car'), # add a car
     path('edit/<int:car_id>/', views.edit_car, name='edit_car'), # car edit
     path('delete/<int:id>/', views.delete_car, name='delete_car'), # delete car
