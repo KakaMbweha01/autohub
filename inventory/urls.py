@@ -2,6 +2,19 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from .views import CarListAPIView, CarDetailAPIView, CarReviewsAPIView, AddReviewAPIView
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework.permissions import AllowAny
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="AutoHub API",
+        default_version = 'v1',
+        description = "API documentation for AutoHub",
+    ),
+    public=True,
+    permission_classes=[AllowAny]
+)
 
 urlpatterns = [
     path('', views.car_list, name='car_list'), # Homepage
@@ -36,4 +49,6 @@ urlpatterns = [
     path('api/cars/<int:car_id>/', CarDetailAPIView.as_view(), name='api_car_detail'), # api endpoint for car details
     path('api/cars/<int:car_id>/reviews/', CarReviewsAPIView.as_view(), name='car-reviews'), # api endpoint for car reviews
     path('api/reviews/add/', AddReviewAPIView.as_view(), name='add-review'), # api endpoint to review a car
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
