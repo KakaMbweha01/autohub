@@ -1,7 +1,7 @@
 # Active: 1733979292823@@127.0.0.1@3306@autohub
 from django.shortcuts import render, redirect,  get_object_or_404, get_list_or_404
-from inventory.forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm, ReviewForm
-from inventory.models import Car, Review, UserProfile, Notification
+from .forms import CarForm, UserRegistrationForm, UserProfileForm, ContactForm, ReviewForm
+from .models import Car, Review, UserProfile, Notification
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
@@ -16,6 +16,10 @@ from django.core.mail import send_mail
 #from django.dispatch import receiver
 import logging
 from django.db import transaction
+#from rest_framework.views import APIView
+#from rest_framework.response import Response
+#from rest_framework import status
+from .serializers import CarSerializer
 
 
 # Create your views here.
@@ -434,3 +438,20 @@ def mark_all_as_read(request):
     request.user.notifications.filter(is_read=False).update(is_read=True)
     messages.info(request, "All notifications marked as read.")
     return redirect('home')
+
+# Api view for car list
+class CarListAPIView(APIView):
+    def get(self, request):
+        cars = Car.objects.all()
+        serializer = CarSerializer(cars, many=True)
+        return Response(serializer.data)
+
+# Api view for car detail
+class CarDetailAPIView(APIView):
+    def get(self, request, car_id):
+        try:
+            car = Car.objects.get(id=car_id)
+            serializer = CarSerializer(car)
+            return Response(serializer.data)
+        except Car.DoesNotExist:
+            return Response({'error': 'Car not found'}, status=status.HTTP_404_NOT_FOUND)

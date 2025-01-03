@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from .views import CarListAPIView, CarDetailAPIView
 
 urlpatterns = [
     path('', views.car_list, name='car_list'), # Homepage
@@ -31,4 +32,6 @@ urlpatterns = [
     path('notifications/', views.notifications, name='notification'), # notifications
     path('notifications/read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'), # mark notification as read
     path('notifications/read_all', views.mark_all_as_read, name='mark_all_as_read'), # mark all notifications as read
+    path('api/cars/', CarListAPIView.as_view(), name='api_car_list'), # api endpoint for carlist
+    path('api/cars/<int:car_id>/', CarDetailAPIView.as_view(), name='api_car_detail'), # api endpoint for car details
 ]
