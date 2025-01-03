@@ -1,5 +1,5 @@
-#from rest_framework import serializers
-from .models import Car, UserProfile
+from rest_framework import serializers
+from .models import Car, UserProfile, Review
 
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,3 +10,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['id', 'user', 'favorite_cars']
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'

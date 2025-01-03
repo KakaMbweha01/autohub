@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-from .views import CarListAPIView, CarDetailAPIView
+from .views import CarListAPIView, CarDetailAPIView, CarReviewsAPIView, AddReviewAPIView
 
 urlpatterns = [
     path('', views.car_list, name='car_list'), # Homepage
@@ -13,7 +13,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='inventory/login.html'), name='login'), # login
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'), # logout
     path('register/', views.register, name='register'), # registration
-    path('', views.home, name='home'),
+    path('', views.home, name='home'), # apa ndio mtaa!
     path('dashboard/', views.user_dashboard, name='user_dashboard'), # dashboard
     path('profile/edit/', views.edit_profile, name='edit_profile'), # edit profile
     path('profile/change-password/', auth_views.PasswordChangeView.as_view(template_name='inventory/change_password.html'), name='change_password'), # change password
@@ -34,4 +34,6 @@ urlpatterns = [
     path('notifications/read_all', views.mark_all_as_read, name='mark_all_as_read'), # mark all notifications as read
     path('api/cars/', CarListAPIView.as_view(), name='api_car_list'), # api endpoint for carlist
     path('api/cars/<int:car_id>/', CarDetailAPIView.as_view(), name='api_car_detail'), # api endpoint for car details
+    path('api/cars/<int:car_id>/reviews/', CarReviewsAPIView.as_view(), name='car-reviews'), # api endpoint for car reviews
+    path('api/reviews/add/', AddReviewAPIView.as_view(), name='add-review'), # api endpoint to review a car
 ]

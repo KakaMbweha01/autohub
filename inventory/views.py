@@ -16,10 +16,13 @@ from django.core.mail import send_mail
 #from django.dispatch import receiver
 import logging
 from django.db import transaction
-#from rest_framework.views import APIView
-#from rest_framework.response import Response
-#from rest_framework import status
-from .serializers import CarSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, filters
+from .serializers import CarSerializer, ReviewSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics
 
 
 # Create your views here.
@@ -440,7 +443,13 @@ def mark_all_as_read(request):
     return redirect('home')
 
 # Api view for car list
-class CarListAPIView(APIView):
+class CarListAPIView(generics.ListAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['brand', 'price'] # apa eka fields to filter by
+    search_fields = ['name'] # allow search on the name of a car
+    ordering_fields = ['year', 'price'] # allow sorting
     def get(self, request):
         cars = Car.objects.all()
         serializer = CarSerializer(cars, many=True)
@@ -455,3 +464,28 @@ class CarDetailAPIView(APIView):
             return Response(serializer.data)
         except Car.DoesNotExist:
             return Response({'error': 'Car not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# api view for adding a car
+class AddCarAPIView(generics.CreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    permission_classes = [IsAuthenticated]
+
+# api view to add a review
+class AddReviewAPIView(generics.CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+# api view for car reviews
+class CarReviewsAPIView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    def get_queryset(self):
+        car_id  = self.kwargs['car_id']
+        return Review.objects.filter(car_id=car_id)
+
+# api view to delete a car
+''' class DeleteCarAPIView(generics.CreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    permission_classes = [IsAuthenticated] '''
