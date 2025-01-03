@@ -12,6 +12,11 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Avg
 from django.core.mail import send_mail
+#from django.db.models.signals import post_save
+#from django.dispatch import receiver
+import logging
+from django.db import transaction
+
 
 # Create your views here.
 @login_required
@@ -23,7 +28,6 @@ def profile(request):
 @login_required
 def car_list(request):
     query = request.GET.get('q', '')
-    cars = Car.objects.all().order_by('name')
     unread_notifications = request.user.notifications.filter(is_read=False).all()
     if query:
         cars = Car.objects.filter(
@@ -61,6 +65,8 @@ def car_list(request):
     if sort_by in ['price', '-price', 'year', '-year', 'average_rating', '-average_rating']:
         cars = cars.order_by(sort_by)
 
+    cars = Car.objects.all().order_by('name')
+
     paginator = Paginator(cars, 5) # Display 5 cars per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -78,10 +84,6 @@ def car_detail(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     # calculate average rating
     average_rating = car.reviews.aggregate(Avg('rating'))['rating__avg']
-    context = {
-        'car': car,
-        'average_rating': average_rating or "No ratings yet", # Default message if no ratings exist
-    }
     reviews = car.reviews.all()
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -93,11 +95,13 @@ def car_detail(request, car_id):
             return redirect('car_detail', car_id=car.id)
     else:
         form = ReviewForm()
-    return render(request, 'inventory/car_detail.html', {
+    context = {
         'car': car,
         'reviews': reviews,
         'form': form,
-    }, context)
+        'average_rating': average_rating or "No ratings yet", # default message if no ratings exist
+    }
+    return render(request, 'inventory/car_detail.html', context)
 
 # view to add a car
 def add_car(request):
@@ -220,8 +224,15 @@ def compare_cars(request):
     return render(request, 'inventory/compare.html', {'cars': cars})
 
 # add a car to favorites
+logger = logging.getLogger(__name__)
+@transaction.atomic
 @login_required
 def add_to_favorites(request, car_id):
+    # debug to verify request.user.id is not None
+    logger.debug(f"User: {request.user}, User ID: {request.user.id}")
+    # check authentication status
+    if not request.user.is_authenticated:
+        return redirect('login')
     # get car object
     car = get_object_or_404(Car, id=car_id)
     # ensure the user has a userprofile
@@ -231,13 +242,13 @@ def add_to_favorites(request, car_id):
         # Add the car to user's favorite
         user_profile.favorite_cars.add(car)
         messages.success(request, f"{car.name} has been added to your favorites!")
+         # notifying the car owner when someone has added their car to favorites
+        #Notification.objects.create(
+            #user = car.added_by,
+            #message = f"{request.userprofile} has favorited your car '{car.name}'."
+            # )
     else:
         messages.info(request, f"{car.name} is already in your favorites.")
-    # notifying the car owner when someone has added their car to favorites
-    Notification.objects.create(
-        user=car.added_by,
-        message=f"{user_profile} has favorited your car '{car.name}'."
-    )
     return redirect('favorites')
 
 # remove a car from favorites
@@ -247,7 +258,8 @@ def remove_from_favorites(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     #ensure the user has a profile
     #created = UserProfile.objects.get_or_create(user=request.user)
-    user_profile = request.user.userprofile
+    user = request.user
+    user_profile = user.userprofile
     if car in user_profile.favorite_cars.all():
         # remove car from user's favorite
         user_profile.favorite_cars.remove(car)

@@ -23,7 +23,20 @@
     </div>
 
     <hr>
-
+    <h2>Rating</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="rating" class="form-label">Rating</label>
+            <select name="rating" id="rating" class="form-select">
+                <option value="1">1 - Poor</option>
+                <option value="2">2 - Fair</option>
+                <option value="3">3 - Good</option>
+                <option value="4">4 - Very Good</option>
+                <option value="5">5 - Excellent</option>
+            </select>
+        </div>
+    </form>
     <h2>Reviews</h2>
     {% for review in car.reviews.all %}
         <div class="border p-3 mb-3">
@@ -40,16 +53,6 @@
     <h3>Leave a Review</h3>
     <form method="post">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="rating" class="form-label">Rating</label>
-            <select name="rating" id="rating" class="form-select">
-                <option value="1">1 - Poor</option>
-                <option value="2">2 - Fair</option>
-                <option value="3">3 - Good</option>
-                <option value="4">4 - Very Good</option>
-                <option value="5">5 - Excellent</option>
-            </select>
-        </div>
         <div class="mb-3">
             <label for="text" class="form-label">Review</label>
             <textarea name="text" id="text" class="form-control" rows="4"></textarea>
