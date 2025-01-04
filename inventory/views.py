@@ -19,10 +19,12 @@ from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, filters
-from .serializers import CarSerializer, ReviewSerializer
+from .serializers import CarSerializer, ReviewSerializer, UserProfileSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
+from rest_framework.generics import ListAPIView
+
 
 
 # Create your views here.
@@ -483,6 +485,80 @@ class CarReviewsAPIView(generics.ListAPIView):
     def get_queryset(self):
         car_id  = self.kwargs['car_id']
         return Review.objects.filter(car_id=car_id)
+
+# api view for favorites
+class FavoritesListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_profile = request.user.userprofile
+        favorites = user_profile.favorites.all()
+        data = [{"id": car.id, "name": car.name, "details": car.details} for car in favorites]
+        return Response(data)
+
+# api view for adding to favorites
+class AddToFavoritesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, car_id):
+        user_profile = request.user.userprofile
+        car = Car.objects.get(id=car_id)
+        user_profile.favorites.add(car)
+        return Response({"message": "Car added to favorites"})
+
+# api view for removing favorites
+class RemoveFromFavoritesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, car_id):
+        user_profile = request.user.userprofile
+        car = Car.objects.get(id=car_id)
+        user_profile.favorites.remove(car)
+        return Response({"message": "Car removed from favorites"})
+
+# api view to search for a car by name or other fields
+class SearchCarsView(ListAPIView):
+    serializer_class = CarSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', '')
+        return Car.objects.filter(name__icontains=query)
+
+# api view to view user notifications
+class NotificationListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        notifications = request.user.userprofile.notifications.filter(is_read=False)
+        data = [{"id": notif.id, "message": notif.message, "timestamp": notif.tmestamp} for notif in notifications]
+        return Response(data)
+
+# api view to mark notifications as read
+class MarkNotificationReadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, notification_id):
+        notification = Notification.objects.get(id=notification_id, user=request.user.userprofile)
+        notification.is_read = True
+        notification.save()
+        return Response({"message": "Notification marked as read"})
+
+# api view retrieve user profile details and update user profile information
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = request.user.userprofile
+        serializer = UserProfileSerializer(profile)
+        return Response(serializer.data)
+
+    def put(self, request):
+        profile = request.user.userprofile
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 
 # api view to delete a car
 ''' class DeleteCarAPIView(generics.CreateAPIView):

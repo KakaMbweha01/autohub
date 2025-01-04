@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-from .views import CarListAPIView, CarDetailAPIView, CarReviewsAPIView, AddReviewAPIView
+from .views import CarListAPIView, CarDetailAPIView, CarReviewsAPIView, AddReviewAPIView, FavoritesListView, AddToFavoritesView, RemoveFromFavoritesView, SearchCarsView, NotificationListView, MarkNotificationReadView, UserProfileView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.permissions import AllowAny
@@ -51,4 +51,11 @@ urlpatterns = [
     path('api/reviews/add/', AddReviewAPIView.as_view(), name='add-review'), # api endpoint to review a car
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('favorites/', FavoritesListView.as_view(), name='favorites-list'), # api endpoint for favorites
+    path('favorites/add/<int:car_id>/', AddToFavoritesView.as_view(), name='add-to-favorites'), # api endpoint for adding to favorites
+    path('favorites/remove/<int:car_id>/', RemoveFromFavoritesView.as_view()), # api endpoint for removing from favorites
+    path('search/', SearchCarsView.as_view(), name='search-cars'), # api endpoint to search for cars
+    path('notifications/', NotificationListView.as_view(), name='notifiacions-list'), # api endpoint notifications
+    path('notifications/read/<int:notification_id>/', MarkNotificationReadView.as_view(), name='mark-notification-read'), # api endpoint to mark notification as read
+    path('profile/', UserProfileView.as_view(), name='user-profile'), # api endpoint for user profile
 ]

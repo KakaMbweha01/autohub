@@ -9,7 +9,7 @@ class CarSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['id', 'user', 'favorite_cars']
+        fields = ['id', 'user', 'favorite_cars', 'profile_picture']
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
