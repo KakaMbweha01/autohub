@@ -1,8 +1,7 @@
 from django.contrib import admin
+from .models import Car, Notification, Favorite
 
 # Register your models here.
-from django.contrib import admin
-from .models import Car
 
 class CarAdmin(admin.ModelAdmin):
     list_display = ('name', 'brand', 'year', 'price') # fields to display in the listvew
@@ -10,3 +9,15 @@ class CarAdmin(admin.ModelAdmin):
     list_filter = ('brand', 'year') # Add filters for specific fields
 
 admin.site.register(Car)
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'message', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('message', 'user__username')
+
+@admin.register(admin.ModelAdmin)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'car', 'added_date')
+    list_filter = ('added_date')
+    search_fields = ('user__username', 'car__name')

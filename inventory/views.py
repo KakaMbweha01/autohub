@@ -19,11 +19,12 @@ from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, filters
-from .serializers import CarSerializer, ReviewSerializer, UserProfileSerializer
+from .serializers import CarSerializer, ReviewSerializer, UserProfileSerializer, FavoriteSerializer, NotificationSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from rest_framework.generics import ListAPIView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 
@@ -559,6 +560,9 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    pass
 
 # api view to delete a car
 ''' class DeleteCarAPIView(generics.CreateAPIView):

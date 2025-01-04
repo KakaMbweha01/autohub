@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.utils.timezone import now
 
 # Create your models here.
 # car model
@@ -87,6 +88,15 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.user.username}: {self.message}"
+
+# favorite model for users favorite cars
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
+    car = models.ForeignKey('Car', on_delete=models.CASCADE)
+    added_date = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return f"{self.user.username} favorited {self.car}"
 
 # added for a foreign key
 #  name = models.CharField(max_length=255)
