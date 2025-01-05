@@ -10,14 +10,18 @@ class CarAdmin(admin.ModelAdmin):
 
 admin.site.register(Car)
 
-@admin.register(Notification)
+#@admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('user', 'message', 'is_read', 'created_at')
     list_filter = ('is_read', 'created_at')
     search_fields = ('message', 'user__username')
 
-@admin.register(admin.ModelAdmin)
+admin.site.register(Notification)
+
+#@admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'car', 'added_date')
     list_filter = ('added_date')
     search_fields = ('user__username', 'car__name')
+
+admin.site.register(Favorite)
