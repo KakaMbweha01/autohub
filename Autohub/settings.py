@@ -25,8 +25,11 @@ SECRET_KEY = 'django-insecure-7#6cs-pvj=j&cph&ec%@$c8v-gx*4i$^v3$6xb29ei=&rhg62c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# allowed hosts to access site
 ALLOWED_HOSTS = ['127.0.0.1' ,'localhost']
 
+# allow all origins corsheaders(specify domains later)
+CORS_ALLOW_ALL_ORIGINS = True # use CORS_ALLOWED_ORIGINS in production for security!
 
 # Application definition
 
@@ -40,6 +43,8 @@ INSTALLED_APPS = [
     'inventory',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'autohub.urls'
@@ -172,3 +178,19 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'my-email@example.com' # Replace with email yangu baadae
 EMAIL_HOST_PASSWORD = 'my-email-password' # Replace na email password
+
+# adding Authentication and Permissions
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES':[
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS':[
+        'rest_framework.pagination.PageNumberPagination',
+    ],
+    'PAGE_SIZE': 10,
+}
