@@ -1,30 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { getUserProfile } from "../services/api";
+import { getProfile } from "../services/api";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
-function UserProfile() {
+const Profile = () => {
     const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        async function fetchProfile() {
-            try {
-                const response = await getUserProfile();
+        getProfile()
+            .then((response) => {
                 setProfile(response.data);
-            } catch (error) {
-                console.error('Failed to fetch profile:', error);
-            }
-        };
-        fetchProfile();
+                setLoading(false);
+            })
+            .catch(() => {
+                setError("Failed to load profile.");
+                setLoading(false);
+            });
     }, []);
 
-    if (!profile) return <p>Loading profile...</p>;
+    if (loading) return <Loader />;
+    if (error) return <Message variant="danger">{error}</Message>;
 
     return (
         <div>
             <h1>User Profile</h1>
-            <p><strong>Name:</strong> {profile.name}</p>
-            <p><strong>Email:</strong> {profile.email}</p>
+            {profile && (
+                <div>
+                    <p><strong>Name:</strong> {profile.name}</p>
+                    <p><strong>Email:</strong> {profile.email}</p>
+                </div>
+            )}
         </div>
     );
 }
 
-export default UserProfile;
+export default Profile;

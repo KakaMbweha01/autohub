@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getUserProfile, getNotifications} from '../services/api';
+import { getCars } from '../services/api';
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
-function Home() {
+/*function Home() {
     const [profile, setProfile] = useState(null);
     const [notifications, setNotifications] = useState([]);
 
@@ -37,6 +39,38 @@ function Home() {
             </div>
         </div>
     )
-}
+}*/
+
+const Home = () => {
+    const [cars, setCars] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        getCars()
+            .then((response) => {
+                setCars(response.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                setError("Failed to load cars.");
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) return <Loader />;
+    if (error) return <Message variant="danger">{error}</Message>;
+
+    return (
+        <div>
+            <h1>Available Cars</h1>
+            <ul>
+                {cars.map((car) => (
+                    <li key={car.id}>{car.name}</li>
+                ))}
+            </ul>
+        </div>
+    );
+};
 
 export default Home;

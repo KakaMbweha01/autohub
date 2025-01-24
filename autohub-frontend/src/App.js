@@ -8,8 +8,8 @@ import Favorites from './pages/Favorites';
 import Notifications from './pages/Notifications';
 import Search from './pages/Search';
 import UserProfile from './pages/UserProfile';
-import CarDetail from './components/CarDetails';
-import CarList from './components/CarList';
+import CarDetail from './pages/CarDetails';
+//import CarList from './components/CarList';
 
 
 function App() {
@@ -19,12 +19,12 @@ function App() {
       <Home />
       <Router>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile" element={<UserProfile />} />
-          <Route path="/cardetail" element={<CarDetail />} />
-          <Route path="/carlist" element={<CarList />} />
+          <Route path="/cars/:carId" element={<CarDetail />} />
         </Routes>
       </Router>
       <Footer />

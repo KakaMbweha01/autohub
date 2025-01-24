@@ -1,55 +1,43 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 //import axios from "axios";
 import { searchCars } from "../services/api";
+import { useSearchParams } from "react-router-dom";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
-/*const Search = () => {
-    const [query, setQuery] = useState('');
+const Search = () => {
+    const [searchParams] = useSearchParams();
+    const query = useSearchParams.get("q");
     const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-    const handleSearch = () => {
-        axios.get(`http://127.0.0.1:8000/search/?q=${query}`)
-            .then(response => {
+    useEffect(() => {
+        searchCars(query)
+            .then((response) => {
                 setResults(response.data);
+                setLoading(false);
             })
-            .catch(error => {
-                console.error("Error during search:", error);
+            .catch(() => {
+                setError("Failed to load search results.");
+                setLoading(false);
             });
-    };*/
+    }, [query]);
 
-    function Search() {
-        const [query, setQuery] = useState('');
-        const [results, setResults] = useState([]);
+    if (loading) return <Loader />;
+    if (error) return <Message variant="danger">{error}</Message>;
 
-        const handleSearch = async (e) => {
-            e.preventDefault();
-            try {
-                const response = await searchCars(query);
-                setResults(response.data);
-            } catch (error) {
-                console.error('Search failed:', error);
-            }
-        };
+    return (
+        <div>
+            <h2>Search Results for "{query}"</h2>
+            <ul>
+                {results.map(car => (
+                    <li key={car.id}>{car.name}</li>
+                ))}
+            </ul>
+        </div>
+    );
+};
 
-        return (
-            <div>
-                <h2>Search Cars</h2>
-                <form onSubmit={handleSearch}>
-                    <input
-                        type="text"
-                        placeholder="Search for cars..."
-                        value={query}
-                        onChange={e => setQuery(e.target.value)}
-                    />
-                    <button onClick={handleSearch}>Search</button>
-                </form>
-                <ul>
-                    {results.map(car => (
-                        <li key={car.id}>{car.name}</li>
-                    ))}
-                </ul>
-            </div>
-        );
-    };
-//};
 
 export default Search;

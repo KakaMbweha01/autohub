@@ -1,23 +1,22 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE = 'http://127.0.0.1:8000';
 // Axios instance
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_BASE,
     timeout: 5000,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-export const getFavorites = async () => await api.get('/favorites/');
-export const addToFavorites = async (carId) => await api.post(`/favorites/add/${carId}`);
-export const searchCars = async (query) => await api.get('/search/', { params: { q: query } });
-export const getNotifications = async () => await api.get('/notifications');
-export const getUserProfile = async () => await api.get('/profile/');
-export const getCars = async () => await api.get('/cars/');
-export const getCarDetails = async (carId) => await api.get(`/cars/${carId}/`);
-export const login = (credentials) => api
+export const getFavorites = () => axios.get(`${API_BASE}/favorites/`);
+export const addFavorite = (carId) => axios.post(`${API_BASE}/favorites/add/${carId}`);
+export const searchCars = (query) => axios.get(`${API_BASE}/search/`, { params: { q: query } });
+export const getNotifications = () => axios.get(`${API_BASE}/notifications`);
+export const getProfile = () => axios.get(`${API_BASE}/profile/`);
+export const getCars = () => axios.get(`${API_BASE}/cars/`);
+export const getCarDetails = (carId) => axios.get(`${API_BASE}/cars/${carId}/`);
 
 // if needed: token-based authentication
 api.interceptors.request.use((config) => {
