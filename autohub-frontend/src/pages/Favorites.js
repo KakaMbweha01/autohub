@@ -5,15 +5,15 @@ function Favorites (){
     const [favorites, setFavorites] = useState({});
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchFavorites() {
             try {
-                const data = await getFavorites();
-                setFavorites(data);
+                const response = await getFavorites();
+                setFavorites(response.data);
             } catch (error) {
                 console.error('Error fetching favorites:', error);
             }
-        }
-        fetchData();
+        };
+        fetchFavorites();
     }, [])
 
     return (

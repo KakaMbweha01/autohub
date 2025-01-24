@@ -5,15 +5,15 @@ function UserProfile() {
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchProfile() {
             try {
                 const response = await getUserProfile();
                 setProfile(response.data);
             } catch (error) {
                 console.error('Failed to fetch profile:', error);
             }
-        }
-        fetchData();
+        };
+        fetchProfile();
     }, []);
 
     if (!profile) return <p>Loading profile...</p>;

@@ -15,6 +15,9 @@ export const addToFavorites = async (carId) => await api.post(`/favorites/add/${
 export const searchCars = async (query) => await api.get('/search/', { params: { q: query } });
 export const getNotifications = async () => await api.get('/notifications');
 export const getUserProfile = async () => await api.get('/profile/');
+export const getCars = async () => await api.get('/cars/');
+export const getCarDetails = async (carId) => await api.get(`/cars/${carId}/`);
+export const login = (credentials) => api
 
 // if needed: token-based authentication
 api.interceptors.request.use((config) => {
