@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import { getNotifications } from "../services/api";
 
-const Notifications = () => {
+/* const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
@@ -14,18 +15,34 @@ const Notifications = () => {
         }).catch(error => {
             console.error("Error fetching notifications", error);
         });
-    }, []);
+    }, []); */
 
-    return (
-        <div>
-            <h2>Notifications</h2>
-            <ul>
-                {notifications.map(notif => (
-                    <li key={notif.id}>{notif.message}</li>
-                ))}
-            </ul>
-        </div>
-    );
-};
+    function Notifications(){
+        const [notifications, setNotifications] = useState([]);
+
+        useEffect(() => {
+            async function fetchData() {
+                try {
+                    const data = await getNotifications();
+                    setNotifications(data);
+                } catch (error) {
+                    console.error('Failed to fetch notifications:', error);
+                }
+            }
+            fetchData();
+        }, []);
+
+        return (
+            <div>
+                <h2>Notifications</h2>
+                <ul>
+                    {notifications.map(notif => (
+                        <li key={notif.id}>{notif.message}</li>
+                    ))}
+                </ul>
+            </div>
+        );
+    };
+//};
 
 export default Notifications;

@@ -194,3 +194,16 @@ REST_FRAMEWORK = {
     ],
     'PAGE_SIZE': 10,
 }
+
+APPEND_SLASH = False
+
+#MIDDLEWARE.insert(0, 'corsheaders.middleware.CorseMiddleware')
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+]
