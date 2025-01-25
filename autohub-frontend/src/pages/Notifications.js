@@ -28,12 +28,16 @@ const Notifications = () => {
 
     return (
         <div>
-            <h2>Notifications</h2>
-            <ul>
-                {notifications.map(notif => (
-                    <li key={notif.id}>{notif.message}</li>
-                ))}
-            </ul>
+            <h1>Notifications</h1>
+            {notifications.length ? (
+                <ul>
+                    {notifications.map(notif => (
+                        <li key={notif.id}>{notif.message}</li>
+                    ))}
+                </ul>
+            ) : (
+                <Message variant="info">No notifications available</Message>
+            )}
         </div>
     );
 };

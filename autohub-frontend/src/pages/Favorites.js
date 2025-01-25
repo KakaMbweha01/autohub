@@ -26,11 +26,15 @@ const Favorites = () => {
     return (
         <div>
             <h1>Your Favorites</h1>
-            <ul>
-                {favorites.map((car) => (
-                    <li key={car.id}>{car.name}</li>
-                ))}
-            </ul>
+            {favorites.length ? (
+                <ul>
+                    {favorites.map((car) => (
+                        <li key={car.id}>{car.name}</li>
+                    ))}
+                </ul>
+            ) : (
+                <Message variant="info">No favorite cars found</Message>
+            )}
         </div>
     )
 }

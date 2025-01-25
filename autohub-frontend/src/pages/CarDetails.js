@@ -3,11 +3,13 @@ import { getCarDetails } from '../services/api';
 import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import Button from "../components/Button";
 
 const CarDetail = () => {
     const [car, setCar] = useState(null);
     const { carId } = useParams();
     const [loading, setLoading] = useState("");
+    const [error, setError] = useState("");
 
 
     useEffect(() => {
@@ -28,11 +30,16 @@ const CarDetail = () => {
 
     return (
         <div>
-            <h2>{car.name}</h2>
-            <p><strong>Model:</strong> {car.model}</p>
-            <p><strong>Year:</strong> {car.year}</p>;
-            <p><strong>Price:</strong> Ksh{car.price}</p>
-            <p>{car.description}</p>
+            {car && (
+                <>
+                    <h2>{car.name}</h2>
+                    <p><strong>Model:</strong> {car.model}</p>
+                    <p><strong>Year:</strong> {car.year}</p>;
+                    <p><strong>Price:</strong> Ksh{car.price}</p>
+                    <p>{car.description}</p>
+                    <Button onClick={() => console.log("Add to favorites")}>Add to favorites</Button>
+                </>
+            )}
         </div>
     );
 };

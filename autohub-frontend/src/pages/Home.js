@@ -64,11 +64,15 @@ const Home = () => {
     return (
         <div>
             <h1>Available Cars</h1>
-            <ul>
-                {cars.map((car) => (
-                    <li key={car.id}>{car.name}</li>
-                ))}
-            </ul>
+            {cars.length ?(
+                <ul>
+                    {cars.map((car) => (
+                        <li key={car.id}>{car.name}</li>
+                    ))}
+                </ul>
+            ) : (
+                <Message variant="info">No cars available</Message>
+            )}
         </div>
     );
 };
