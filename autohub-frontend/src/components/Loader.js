@@ -2,8 +2,8 @@ import React from "react";
 
 const Loader = () => {
     return (
-        <div style={StyleSheet.loaderContainer}>
-            <div style={StyleSheet.spinner}></div>
+        <div style={styles.loaderContainer}>
+            <div style={styles.spinner}></div>
             <p>Loading...</p>
         </div>
     );
@@ -28,12 +28,12 @@ const styles = {
 };
 
 // keyframes for spinner animation
-const StyleSheet = document.styleSheets[0];
+const styleSheet = document.styleSheets[0];
 const keyframes =
     `@keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }`;
-StyleSheet.insertRule(keyframes, StyleSheet.cssRules.length);
+styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
 
 export default Loader

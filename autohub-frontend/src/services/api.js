@@ -19,7 +19,7 @@ export const getCars = () => axios.get(`${API_BASE}/cars/`);
 export const getCarDetails = (carId) => axios.get(`${API_BASE}/cars/${carId}/`);
 
 // if needed: token-based authentication
-api.interceptors.request.use((config) => {
+/*api.interceptors.request.use((config) => {
     const token = localStorage.getItem('authToken'); // if token is stored in local storage
     if (token) {
         config.headers.Authorization = 'Token ${token}';
@@ -27,5 +27,5 @@ api.interceptors.request.use((config) => {
     return config;
     },
     (error) => Promise.reject(error)
-);
+);*/
 export default api;

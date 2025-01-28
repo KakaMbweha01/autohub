@@ -6,7 +6,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 
 const Search = () => {
-    const [searchParams] = useSearchParams();
+    //const [searchParams] = useSearchParams();
     const query = useSearchParams.get("q");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(true);
